@@ -1,4 +1,4 @@
-namespace AgendaProfesional.Models;
+namespace AgendaConsultora.Modelos;
 
 public sealed class Persona
 {

@@ -1,0 +1,244 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1180" d:DesignHeight="760"
+        x:Class="AgendaConsultora.Vistas.VistaPrincipal"
+        x:CompileBindings="False"
+        Title="Agenda Consultora"
+        Width="1180" Height="760" MinWidth="960" MinHeight="650"
+        WindowStartupLocation="CenterScreen" Background="#F4F7FB">
+    <Window.Styles>
+        <Style Selector="TextBox">
+            <Setter Property="MinHeight" Value="40" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="12,8" />
+        </Style>
+        <Style Selector="ComboBox">
+            <Setter Property="MinHeight" Value="40" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="10,6" />
+        </Style>
+        <Style Selector="Button">
+            <Setter Property="MinHeight" Value="40" />
+            <Setter Property="Padding" Value="16,8" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Background" Value="#E2E8F0" />
+            <Setter Property="Foreground" Value="#1E293B" />
+        </Style>
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#2563EB" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+        <Style Selector="Button.danger">
+            <Setter Property="Background" Value="#FEE2E2" />
+            <Setter Property="Foreground" Value="#991B1B" />
+        </Style>
+        <Style Selector="Button.success">
+            <Setter Property="Background" Value="#DCFCE7" />
+            <Setter Property="Foreground" Value="#166534" />
+        </Style>
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="Padding" Value="22" />
+            <Setter Property="BorderBrush" Value="#E2E8F0" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style Selector="TextBlock.label">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="#475569" />
+            <Setter Property="Margin" Value="0,8,0,5" />
+        </Style>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+            <Setter Property="CornerRadius" Value="10" />
+        </Style>
+        <Style Selector="TabItem">
+            <Setter Property="Foreground" Value="#475569" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style Selector="TabItem:selected">
+            <Setter Property="Foreground" Value="#2563EB" />
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <Border Grid.Row="0" Background="#0F172A" Padding="28,20">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel>
+                    <TextBlock Text="Agenda Consultora" Foreground="White" FontSize="26" FontWeight="Bold" />
+                    <TextBlock Text="Personas, empresas y relaciones en una sola aplicación"
+                               Foreground="#CBD5E1" FontSize="14" Margin="0,4,0,0" />
+                </StackPanel>
+                <Border Grid.Column="1" Background="#1E293B" CornerRadius="20" Padding="14,8" VerticalAlignment="Center">
+                    <TextBlock Text="Datos en memoria" Foreground="#93C5FD" FontWeight="SemiBold" />
+                </Border>
+            </Grid>
+        </Border>
+
+        <TabControl Grid.Row="1" Margin="22" x:Name="MainTabs">
+            <TabItem Header="Personas">
+                <Grid ColumnDefinitions="390,18,*" Margin="0,16,0,0">
+                    <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                        <Border Classes="card">
+                            <StackPanel Spacing="2">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel>
+                                        <TextBlock Text="Ficha de persona" FontSize="21" FontWeight="Bold" />
+                                        <TextBlock x:Name="PersonaModoText" Text="Nueva persona" Foreground="#64748B" Margin="0,3,0,10" />
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Content="Limpiar" Click="OnNuevaPersona" />
+                                </Grid>
+                                <TextBlock Classes="label" Text="Nombre *" />
+                                <TextBox x:Name="PersonaNombre" PlaceholderText="Ej. Ana" />
+                                <TextBlock Classes="label" Text="Apellidos *" />
+                                <TextBox x:Name="PersonaApellidos" PlaceholderText="Ej. García López" />
+                                <TextBlock Classes="label" Text="Correo electrónico *" />
+                                <TextBox x:Name="PersonaCorreo" PlaceholderText="ana@empresa.es" />
+                                <TextBlock Classes="label" Text="Teléfono *" />
+                                <TextBox x:Name="PersonaTelefono" PlaceholderText="600 123 123" />
+                                <Button Classes="primary" Content="Guardar persona" Margin="0,16,0,0" Click="OnGuardarPersona" />
+
+                                <Border Height="1" Background="#E2E8F0" Margin="0,20,0,12" />
+                                <TextBlock Text="Empresa asociada" FontSize="17" FontWeight="Bold" />
+                                <TextBlock x:Name="PersonaEmpresaActual" Text="Selecciona una persona" Foreground="#64748B" Margin="0,4,0,8" />
+                                <ComboBox x:Name="EmpresaParaPersona" PlaceholderText="Selecciona una empresa activa">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate><TextBlock Text="{Binding Nombre}" /></DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                <Grid ColumnDefinitions="*,10,*" Margin="0,10,0,0">
+                                    <Button Grid.Column="0" Content="Asignar / cambiar" Click="OnAsignarEmpresa" />
+                                    <Button Grid.Column="2" Content="Desvincular" Click="OnDesvincularPersona" />
+                                </Grid>
+                                <Button Classes="danger" Content="Dar de baja a la persona" Margin="0,18,0,0" Click="OnEliminarPersona" />
+                            </StackPanel>
+                        </Border>
+                    </ScrollViewer>
+
+                    <Border Grid.Column="2" Classes="card">
+                        <Grid RowDefinitions="Auto,Auto,*">
+                            <StackPanel>
+                                <TextBlock Text="Directorio de personas" FontSize="21" FontWeight="Bold" />
+                                <TextBlock x:Name="PersonasContador" Foreground="#64748B" />
+                            </StackPanel>
+                            <TextBox Grid.Row="1" x:Name="BuscarPersona"
+                                     PlaceholderText="Buscar por nombre, apellidos o correo"
+                                     Margin="0,16,0,14" TextChanged="OnBuscarPersona" />
+                            <ListBox Grid.Row="2" x:Name="ListaPersonas" Background="Transparent" SelectionChanged="OnSeleccionPersona">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="10" Padding="14">
+                                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                                <Border Width="42" Height="42" CornerRadius="21" Background="#DBEAFE">
+                                                    <TextBlock Text="{Binding Iniciales}" Foreground="#1D4ED8" FontWeight="Bold"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
+                                                <StackPanel Grid.Column="1" Margin="12,0">
+                                                    <TextBlock Text="{Binding NombreCompleto}" FontWeight="Bold" />
+                                                    <TextBlock Text="{Binding Contacto}" Foreground="#64748B" FontSize="13" />
+                                                    <TextBlock Text="{Binding Empresa}" Foreground="#2563EB" FontSize="13" />
+                                                </StackPanel>
+                                                <TextBlock Grid.Column="2" Text="{Binding IdTexto}" Foreground="#94A3B8" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Empresas">
+                <Grid ColumnDefinitions="390,18,*" Margin="0,16,0,0">
+                    <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                        <Border Classes="card">
+                            <StackPanel Spacing="2">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel>
+                                        <TextBlock Text="Ficha de empresa" FontSize="21" FontWeight="Bold" />
+                                        <TextBlock x:Name="EmpresaModoText" Text="Nueva empresa" Foreground="#64748B" Margin="0,3,0,10" />
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Content="Limpiar" Click="OnNuevaEmpresa" />
+                                </Grid>
+                                <TextBlock Classes="label" Text="Nombre comercial *" />
+                                <TextBox x:Name="EmpresaNombre" PlaceholderText="Ej. Consultoría Norte" />
+                                <TextBlock Classes="label" Text="CIF *" />
+                                <TextBox x:Name="EmpresaCif" PlaceholderText="B12345678" />
+                                <TextBlock Classes="label" Text="Correo electrónico *" />
+                                <TextBox x:Name="EmpresaCorreo" PlaceholderText="contacto@empresa.es" />
+                                <TextBlock Classes="label" Text="Teléfono *" />
+                                <TextBox x:Name="EmpresaTelefono" PlaceholderText="910 123 123" />
+                                <TextBlock Classes="label" Text="Dirección *" />
+                                <TextBox x:Name="EmpresaDireccion" PlaceholderText="Calle, número y localidad" />
+                                <Button Classes="primary" Content="Guardar empresa" Margin="0,16,0,0" Click="OnGuardarEmpresa" />
+
+                                <Border Height="1" Background="#E2E8F0" Margin="0,20,0,12" />
+                                <TextBlock Text="Estado" FontSize="17" FontWeight="Bold" />
+                                <TextBlock x:Name="EmpresaEstadoActual" Text="Selecciona una empresa" Foreground="#64748B" Margin="0,4,0,0" />
+                                <Grid ColumnDefinitions="*,10,*" Margin="0,10,0,0">
+                                    <Button Grid.Column="0" Classes="danger" Content="Desactivar" Click="OnDesactivarEmpresa" />
+                                    <Button Grid.Column="2" Classes="success" Content="Reactivar" Click="OnActivarEmpresa" />
+                                </Grid>
+                                <TextBlock Text="Plantilla asociada" FontSize="17" FontWeight="Bold" Margin="0,18,0,6" />
+                                <ItemsControl x:Name="ListaPlantilla">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#F1F5F9" CornerRadius="6" Padding="9" Margin="0,0,0,5">
+                                                <TextBlock Text="{Binding}" />
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </ScrollViewer>
+
+                    <Border Grid.Column="2" Classes="card">
+                        <Grid RowDefinitions="Auto,Auto,*">
+                            <StackPanel>
+                                <TextBlock Text="Directorio de empresas" FontSize="21" FontWeight="Bold" />
+                                <TextBlock x:Name="EmpresasContador" Foreground="#64748B" />
+                            </StackPanel>
+                            <TextBox Grid.Row="1" x:Name="BuscarEmpresa" PlaceholderText="Buscar por nombre comercial o CIF"
+                                     Margin="0,16,0,14" TextChanged="OnBuscarEmpresa" />
+                            <ListBox Grid.Row="2" x:Name="ListaEmpresas" Background="Transparent" SelectionChanged="OnSeleccionEmpresa">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="10" Padding="14">
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Nombre}" FontWeight="Bold" />
+                                                    <TextBlock Text="{Binding Contacto}" Foreground="#64748B" FontSize="13" />
+                                                    <TextBlock Text="{Binding Plantilla}" Foreground="#475569" FontSize="13" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                                                    <Border Background="{Binding EstadoFondo}" CornerRadius="10" Padding="9,4">
+                                                        <TextBlock Text="{Binding Estado}" Foreground="{Binding EstadoColor}" FontWeight="SemiBold" FontSize="12" />
+                                                    </Border>
+                                                    <TextBlock Text="{Binding IdTexto}" Foreground="#94A3B8" HorizontalAlignment="Right" Margin="0,5,0,0" />
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <Border Grid.Row="2" x:Name="BarraEstado" Background="#E0F2FE" Padding="22,12">
+            <TextBlock x:Name="MensajeEstado"
+                       Text="Aplicación preparada. Los cambios se conservan durante esta sesión."
+                       Foreground="#075985" FontWeight="SemiBold" />
+        </Border>
+    </Grid>
+</Window>

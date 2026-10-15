@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Agenda: ejecutar",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["run", "--project", "${workspaceFolder}/src/AgendaConsultora.App/AgendaConsultora.App.csproj"],
+      "problemMatcher": "$msCompile",
+      "group": { "kind": "build", "isDefault": true }
+    },
+    {
+      "label": "Agenda: pruebas",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["run", "--project", "${workspaceFolder}/tests/AgendaConsultora.Tests/AgendaConsultora.Tests.csproj"],
+      "problemMatcher": "$msCompile",
+      "group": "test"
+    }
+  ]
+}

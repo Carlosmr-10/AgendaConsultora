@@ -1,114 +1,96 @@
-# Fase 5 — Modelo orientado a objetos y estructura profesional
+# Agenda Consultora — versión final
 
-Esta entrega reorganiza la aplicación completa de las fases anteriores. Mantiene
-personas, empresas, altas, listados, búsquedas, modificaciones, bajas, reactivación,
-asignación o cambio de empresa, desvinculación y consulta de plantillas.
+Aplicación gráfica de escritorio que reúne los requisitos de las fases 1–5 en un
+único proyecto MVC.
 
-Los datos continúan en memoria. No se ha añadido una base de datos porque el
-enunciado no la exige.
+## Tecnología
 
-## Estructura
+- C# y .NET 10.
+- Avalonia 12.1.4 para la interfaz gráfica multiplataforma.
+- Extensión de VS Code: `AvaloniaTeam.vscode-avalonia`.
+- Datos en memoria, sin base de datos.
+
+Se usa Avalonia porque es la extensión y plantilla instalada en este equipo. .NET
+MAUI no está instalado y no ofrece escritorio Linux nativo.
+
+## Estructura MVC
 
 ```text
-Fase5/
+AgendaConsultora/
+├── AgendaConsultora.sln
 ├── README.md
-├── AgendaProfesional.sln
 ├── src/
-│   └── AgendaProfesional.Console/
-│       ├── AgendaProfesional.Console.csproj
-│       ├── Program.cs
-│       ├── Models/
+│   └── AgendaConsultora.App/
+│       ├── Modelos/
 │       │   ├── Persona.cs
 │       │   ├── Empresa.cs
 │       │   ├── DatosPersona.cs
 │       │   └── DatosEmpresa.cs
-│       ├── Services/
+│       ├── Vistas/
+│       │   ├── VistaPrincipal.axaml
+│       │   ├── VistaPrincipal.axaml.cs
+│       │   └── ModelosVista.cs
+│       ├── Controladores/
+│       │   └── ControladorAgenda.cs
+│       ├── Servicios/
 │       │   └── AgendaService.cs
-│       ├── UI/
-│       │   └── ConsoleUI.cs
-│       └── Utils/
-│           └── InputValidator.cs
+│       ├── Validacion/
+│       │   └── InputValidator.cs
+│       ├── App.axaml
+│       ├── App.axaml.cs
+│       ├── Program.cs
+│       └── AgendaConsultora.App.csproj
 ├── tests/
-│   ├── AgendaProfesional.Tests/
-│   │   ├── AgendaProfesional.Tests.csproj
-│   │   └── Program.cs
-│   └── verificar_fase5.py
-└── evidencias/
-    ├── revision_10_puntos.md
-    └── verificacion.txt
+│   └── AgendaConsultora.Tests/
+├── evidencias/
+└── respaldos/
 ```
 
-La solución contiene el proyecto de aplicación propuesto. Las pruebas permanecen
-como un proyecto auxiliar independiente y referencian la aplicación sin modificarla.
+- **Modelos:** representan personas, empresas y `IdEmpresa` opcional.
+- **Vistas:** muestran formularios, pestañas, listados, mensajes y confirmaciones.
+- **Controlador:** recibe eventos de la vista y coordina todas las operaciones.
+- **Servicio:** mantiene las colecciones y aplica las reglas de negocio.
+- **Validación:** comprueba correo, teléfono y campos obligatorios.
 
-## Reparto de responsabilidades
+La vista no accede a las colecciones. El controlador no contiene controles de
+Avalonia. El servicio no contiene código visual.
 
-| Componente | Responsabilidad |
-|---|---|
-| `Persona` | Representa una persona. `IdEmpresa` es `int?`: puede ser `null` o contener el Id de una única empresa. |
-| `Empresa` | Representa una empresa y conserva su registro mediante el booleano `Estado`. |
-| `DatosPersona` y `DatosEmpresa` | Agrupan los datos recibidos en altas y modificaciones con nombres de propiedad claros. |
-| `AgendaService` | Es propietario de `List<Persona>` y `List<Empresa>`. Ejecuta altas, búsquedas, modificaciones, bajas, colecciones, asignaciones y consultas de relaciones. |
-| `ConsoleUI` | Muestra menús, solicita datos y presenta resultados. Solo usa los métodos públicos de `AgendaService`; no accede ni modifica directamente sus colecciones. |
-| `InputValidator` | Lee texto, opciones, Id y confirmaciones de manera segura. Centraliza las reglas de correo, teléfono y campos obligatorios. |
-| `Program` | Punto de entrada e inicialización: crea `AgendaService`, lo inyecta en `ConsoleUI` e inicia la interfaz con una sola instrucción. |
+## Funcionalidad
 
-## Reglas conservadas
-
-- Los Id se generan automáticamente y no se reutilizan durante la sesión.
-- Los listados se devuelven como `IReadOnlyList<T>` y están ordenados.
-- Una persona puede tener cero o una empresa mediante `IdEmpresa`.
+- Alta, listado, búsqueda, modificación y baja de personas.
+- Alta, listado, búsqueda y modificación de empresas.
+- Id autogenerado para personas y empresas.
+- Listados ordenados por apellidos o nombre comercial.
+- Búsquedas parciales sin distinguir mayúsculas.
+- Confirmación antes de modificar, eliminar o cambiar relaciones.
+- Una persona puede estar sin empresa o pertenecer a una única empresa.
 - Una empresa puede tener cero, una o varias personas.
-- Cambiar la empresa sustituye el Id anterior; no crea relaciones duplicadas.
-- Desvincular conserva todos los datos personales.
-- Una empresa inactiva no puede asignarse.
-- Una empresa relacionada no puede darse de baja hasta trasladar o desvincular su plantilla.
-- La baja de empresa cambia `Estado` a `false`; nunca elimina el objeto de la colección.
-- Reactivar cambia `Estado` a `true` y conserva el mismo Id y datos.
-- Una modificación se aplica después de validar todos los datos, evitando estados parciales.
-- Las opciones no numéricas, fuera de rango y las confirmaciones inválidas no cierran la aplicación.
+- Asignación, cambio y desvinculación de empresa.
+- Consulta de la empresa de una persona y de la plantilla de una empresa.
+- Baja lógica de empresa mediante `Estado = false`; nunca se elimina su registro.
+- Bloqueo de baja mientras existan personas asociadas.
+- Reactivación mediante `Estado = true` conservando Id y datos.
+- Validación de correo, teléfono español y campos obligatorios.
+- Mensajes claros ante operaciones incorrectas.
+- Los datos permanecen en memoria durante la sesión.
 
-## Ejecución
+## Ejecutar
 
-Desde la raíz `AgendaConsultora`:
-
-```bash
-dotnet run --project Fase5/src/AgendaProfesional.Console/AgendaProfesional.Console.csproj
-```
-
-Desde `Fase5/`:
+Desde esta carpeta:
 
 ```bash
-dotnet run --project src/AgendaProfesional.Console/AgendaProfesional.Console.csproj
+dotnet run --project src/AgendaConsultora.App/AgendaConsultora.App.csproj
 ```
 
-La aplicación y las pruebas usan .NET 10, la versión instalada y comprobada en este
-entorno.
-
-## Compilación y pruebas
-
-Desde la raíz `AgendaConsultora`:
+## Compilar y probar
 
 ```bash
-dotnet build Fase5/AgendaProfesional.sln -warnaserror
-dotnet run --project Fase5/tests/AgendaProfesional.Tests/AgendaProfesional.Tests.csproj
-python3 Fase5/tests/verificar_fase5.py
-dotnet build Fase5/AgendaProfesional.sln --configuration Release -warnaserror
+dotnet build AgendaConsultora.sln --configuration Release -warnaserror
+dotnet run --project tests/AgendaConsultora.Tests/AgendaConsultora.Tests.csproj
 ```
 
-Resultados comprobados:
+Resultado comprobado: 29 verificaciones de negocio, compilación Debug y Release sin
+errores ni advertencias, formato correcto y arranque visual validado.
 
-- 38 comprobaciones directas de `AgendaService`, modelos y validadores.
-- 10 escenarios completos contra la aplicación real de consola.
-- Ejecución completa equivalente a Fase 4 después de normalizar únicamente el título.
-- Compilación Debug y Release con cero errores y cero advertencias.
-- Revisión documentada en diez puntos, incluida la regresión de Fases 1–4.
-
-El resumen se conserva en `evidencias/verificacion.txt` y el detalle de la revisión
-en `evidencias/revision_10_puntos.md`.
-
-## Persistencia futura
-
-Si se incorpora un archivo o base de datos, debe añadirse una capa independiente de
-infraestructura. `ConsoleUI` seguirá comunicándose con el servicio y no contendrá
-consultas, rutas de archivos ni instrucciones de base de datos.
+El cumplimiento por fases está documentado en
+`evidencias/cumplimiento-fases-1-a-5.md`.
