@@ -42,3 +42,22 @@ foreach (var datos in new[] {
 Verificar(!empresas.Desactivar(99) && !empresas.Activar(99) && !empresas.Modificar(99,"N","B","912345678","a@dominio.es","C"), "Id inexistente controlado");
 Verificar(empresas.Listar().Select(e => e.NombreComercial).SequenceEqual(new[]{"Alfa","Beta"}), "Listado ordenado con estados conservados");
 Console.WriteLine($"{pruebas} comprobaciones de servicios superadas.");
+
+var rp = new GestorPersonas();
+var re = new GestorEmpresas(rp);
+var relaciones = new GestorRelaciones(rp, re);
+var ana = rp.Alta("Ana", "Zamora", "ana@consultora.es", "612345678");
+var luis = rp.Alta("Luis", "Alonso", "luis@consultora.es", "623456789");
+var alfa = re.Alta("Alfa", "B1", "912345678", "alfa@consultora.es", "Calle Uno");
+var beta = re.Alta("Beta", "B2", "923456789", "beta@consultora.es", "Calle Dos");
+Verificar(relaciones.EmpresaDePersona(ana.Id) is null, "Persona inicialmente sin empresa");
+Verificar(!relaciones.Asignar(999, alfa.Id) && !relaciones.Asignar(ana.Id, 999), "Asignación exige ambos Id existentes");
+Verificar(relaciones.Asignar(ana.Id, alfa.Id) && ReferenceEquals(relaciones.EmpresaDePersona(ana.Id), alfa), "Asignación consultable");
+Verificar(relaciones.Asignar(luis.Id, alfa.Id) && rp.ListarPorEmpresa(alfa.Id).Count == 2, "Una empresa admite varias personas");
+Verificar(!re.Desactivar(alfa.Id) && alfa.Estado, "Relaciones impiden baja lógica");
+Verificar(relaciones.Asignar(ana.Id, beta.Id) && rp.ListarPorEmpresa(alfa.Id).Count == 1 && rp.ListarPorEmpresa(beta.Id).Count == 1, "Cambio no duplica asociación");
+Verificar(relaciones.Desvincular(ana.Id) && ana.EmpresaId is null && ana.Correo == "ana@consultora.es", "Desvincular conserva datos");
+Verificar(!relaciones.Desvincular(ana.Id) && !relaciones.Desvincular(999), "Desvinculación inexistente controlada");
+Verificar(re.Desactivar(beta.Id) && !relaciones.Asignar(ana.Id, beta.Id) && ana.EmpresaId is null, "No asociar empresa desactivada");
+Verificar(re.Activar(beta.Id) && relaciones.Asignar(ana.Id, beta.Id), "Reactivar permite nueva asignación");
+Console.WriteLine($"Total: {pruebas} comprobaciones de servicios superadas.");

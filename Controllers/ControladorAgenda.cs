@@ -22,8 +22,9 @@ internal sealed class ControladorAgenda
         var gestorEmpresas = new GestorEmpresas(gestorPersonas);
         var controlador = new ControladorAgenda(
             new VistaAgenda(),
-            new ControladorPersonas(gestorPersonas, new VistaPersonas()),
-            new ControladorEmpresas(gestorEmpresas, new VistaEmpresas()));
+            new ControladorPersonas(gestorPersonas, new VistaPersonas(),
+                new GestorRelaciones(gestorPersonas, gestorEmpresas), new VistaRelaciones()),
+            new ControladorEmpresas(gestorEmpresas, new VistaEmpresas(), gestorPersonas));
         controlador.Ejecutar();
     }
 

@@ -8,10 +8,12 @@ internal sealed class ControladorEmpresas
 {
     private readonly GestorEmpresas gestor;
     private readonly VistaEmpresas vista;
-    public ControladorEmpresas(GestorEmpresas gestor, VistaEmpresas vista)
+    private readonly GestorPersonas personas;
+    public ControladorEmpresas(GestorEmpresas gestor, VistaEmpresas vista, GestorPersonas personas)
     {
         this.gestor = gestor;
         this.vista = vista;
+        this.personas = personas;
     }
 
     public void Ejecutar()
@@ -26,6 +28,7 @@ internal sealed class ControladorEmpresas
                 case 4: Modificar(); break;
                 case 5: CambiarEstado(false); break;
                 case 6: CambiarEstado(true); break;
+                case 7: VerPlantilla(); break;
                 case 0: return;
             }
         }
@@ -112,4 +115,11 @@ internal sealed class ControladorEmpresas
 
     private void MostrarEmpresa(Empresa empresa) =>
         vista.MostrarEmpresa(empresa, gestor.PuedeDesactivar(empresa.Id));
+
+    private void VerPlantilla()
+    {
+        Empresa? empresa = Localizar();
+        if (empresa is null) return;
+        vista.MostrarPlantilla(empresa, personas.ListarPorEmpresa(empresa.Id));
+    }
 }

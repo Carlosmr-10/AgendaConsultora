@@ -16,26 +16,17 @@ internal sealed class VistaPersonas
         return (nombre, apellidos, correo, telefono);
     }
 
-    public void MostrarResultados(IReadOnlyList<Persona> personas,
-        string mensajeVacio = "No hay personas registradas.")
-    {
-        if (personas.Count == 0)
-        {
-            Console.WriteLine(mensajeVacio);
-            return;
-        }
-        foreach (Persona persona in personas)
-            MostrarPersona(persona);
-    }
-
-    public void MostrarPersona(Persona persona)
+    public void MostrarPersona(Persona persona, Empresa? empresa)
     {
         Console.WriteLine($"Id: {persona.Id}\nNombre: {persona.Nombre} {persona.Apellidos}");
         Console.WriteLine($"Correo: {persona.Correo}\nTeléfono: {persona.Telefono}");
+        Console.WriteLine(empresa is null ? "Empresa: Sin empresa asignada"
+            : $"Empresa: {empresa.NombreComercial} (Id: {empresa.Id})");
         Console.WriteLine("----------------------------------------");
     }
 
-    public void MostrarBusqueda(IReadOnlyList<Persona> personas) => MostrarResultados(personas, "No se encontraron coincidencias.");
+    public void SinResultados(bool busqueda) => Console.WriteLine(busqueda
+        ? "No se encontraron coincidencias." : "No hay personas registradas.");
 
     public void AltaRealizada() => Console.WriteLine("Alta realizada correctamente.");
 
@@ -55,8 +46,8 @@ internal sealed class VistaPersonas
     {
         Console.WriteLine("\n=== PERSONAS ===");
         Console.WriteLine("1. Dar de alta una persona\n2. Listar personas\n3. Buscar persona");
-        Console.WriteLine("4. Modificar persona\n5. Dar de baja una persona\n0. Volver al menú principal");
-        return Entrada.Numero("Selecciona una opción: ", 0, 5);
+        Console.WriteLine("4. Modificar persona\n5. Dar de baja una persona\n6. Asignar o cambiar empresa\n7. Desvincular empresa\n0. Volver al menú principal");
+        return Entrada.Numero("Selecciona una opción: ", 0, 7);
     }
 
     public int LeerTipoBusqueda()

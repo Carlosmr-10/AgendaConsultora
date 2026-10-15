@@ -49,8 +49,8 @@ internal sealed class VistaEmpresas
     {
         Console.WriteLine("\n=== EMPRESAS ===");
         Console.WriteLine("1. Alta\n2. Listar (activas e inactivas)\n3. Buscar\n4. Modificar");
-        Console.WriteLine("5. Dar de baja (solo sin relaciones)\n6. Reactivar\n0. Volver al menú principal");
-        return Entrada.Numero("Selecciona una opción: ", 0, 6);
+        Console.WriteLine("5. Dar de baja (solo sin relaciones)\n6. Reactivar\n7. Ver personas de una empresa\n0. Volver al menú principal");
+        return Entrada.Numero("Selecciona una opción: ", 0, 7);
     }
 
     public int LeerTipoBusqueda()
@@ -70,4 +70,12 @@ internal sealed class VistaEmpresas
     public void SolicitarNuevosDatos() => Console.WriteLine("Introduce los datos nuevos, repitiendo los que quieras conservar.");
 
     public void MostrarPropuesta((string Nombre, string Cif, string Telefono, string Correo, string Direccion) d) => Console.WriteLine($"Propuesta: {d.Nombre} | {d.Cif} | {d.Telefono} | {d.Correo} | {d.Direccion}");
+
+    public void MostrarPlantilla(Empresa empresa, IReadOnlyList<Persona> personas)
+    {
+        Console.WriteLine($"Plantilla de {empresa.NombreComercial} (Id: {empresa.Id})");
+        if (personas.Count == 0) Console.WriteLine("Esta empresa no tiene personas asociadas.");
+        var vistaPersonas = new VistaPersonas();
+        foreach (Persona persona in personas) vistaPersonas.MostrarPersona(persona, empresa);
+    }
 }

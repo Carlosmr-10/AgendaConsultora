@@ -48,13 +48,24 @@ public sealed class GestorPersonas
 
     public bool TieneRelacionConEmpresa(int empresaId) => personas.Any(p => p.EmpresaId == empresaId);
 
-    // Preparación para la siguiente fase; todavía no se ofrece vinculación en el menú.
+    // La asignación por identificadores se coordina desde GestorRelaciones.
     public bool VincularEmpresa(int personaId, Empresa empresa)
     {
         Persona? persona = BuscarPorId(personaId);
         if (persona is null || !empresa.Estado)
             return false;
         persona.EmpresaId = empresa.Id;
+        return true;
+    }
+
+    public IReadOnlyList<Persona> ListarPorEmpresa(int empresaId) =>
+        Ordenar(personas.Where(p => p.EmpresaId == empresaId));
+
+    public bool DesvincularEmpresa(int personaId)
+    {
+        Persona? persona = BuscarPorId(personaId);
+        if (persona is null || persona.EmpresaId is null) return false;
+        persona.EmpresaId = null;
         return true;
     }
 

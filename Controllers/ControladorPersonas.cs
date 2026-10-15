@@ -8,10 +8,15 @@ internal sealed class ControladorPersonas
 {
     private readonly GestorPersonas Gestor;
     private readonly VistaPersonas vista;
-    public ControladorPersonas(GestorPersonas gestor, VistaPersonas vista)
+    private readonly GestorRelaciones relaciones;
+    private readonly VistaRelaciones vistaRelaciones;
+    public ControladorPersonas(GestorPersonas gestor, VistaPersonas vista,
+        GestorRelaciones relaciones, VistaRelaciones vistaRelaciones)
     {
         Gestor = gestor;
         this.vista = vista;
+        this.relaciones = relaciones;
+        this.vistaRelaciones = vistaRelaciones;
     }
 
     public void Ejecutar()
@@ -21,10 +26,12 @@ internal sealed class ControladorPersonas
             switch (vista.LeerOpcion())
             {
                 case 1: Alta(); break;
-                case 2: vista.MostrarResultados(Gestor.Listar()); break;
+                case 2: MostrarResultados(Gestor.Listar()); break;
                 case 3: Buscar(); break;
                 case 4: Modificar(); break;
                 case 5: Baja(); break;
+                case 6: AsignarEmpresa(); break;
+                case 7: DesvincularEmpresa(); break;
                 case 0: return;
             }
         }
@@ -35,7 +42,7 @@ internal sealed class ControladorPersonas
         var datos = vista.LeerDatos();
         Persona persona = Gestor.Alta(datos.Nombre, datos.Apellidos, datos.Correo, datos.Telefono);
         vista.AltaRealizada();
-        vista.MostrarPersona(persona);
+        MostrarPersona(persona);
     }
 
     private void Buscar()
@@ -44,12 +51,12 @@ internal sealed class ControladorPersonas
         {
             Persona? persona = Localizar();
             if (persona is not null)
-                vista.MostrarPersona(persona);
+                MostrarPersona(persona);
         }
         else
         {
             string texto = vista.LeerBusqueda();
-            vista.MostrarBusqueda(Gestor.BuscarPorNombre(texto));
+            MostrarResultados(Gestor.BuscarPorNombre(texto), true);
         }
     }
 
@@ -68,7 +75,7 @@ internal sealed class ControladorPersonas
         if (persona is null)
             return;
         vista.DatosActuales();
-        vista.MostrarPersona(persona);
+        MostrarPersona(persona);
         vista.SolicitarNuevosDatos();
         var datos = vista.LeerDatos();
         vista.MostrarPropuesta(persona.Id, datos);
@@ -79,7 +86,7 @@ internal sealed class ControladorPersonas
         }
         Gestor.Modificar(persona.Id, datos.Nombre, datos.Apellidos, datos.Correo, datos.Telefono);
         vista.ModificacionRealizada();
-        vista.MostrarPersona(Gestor.BuscarPorId(persona.Id)!);
+        MostrarPersona(Gestor.BuscarPorId(persona.Id)!);
     }
 
     private void Baja()
@@ -87,7 +94,7 @@ internal sealed class ControladorPersonas
         Persona? persona = Localizar();
         if (persona is null)
             return;
-        vista.MostrarPersona(persona);
+        MostrarPersona(persona);
         if (!vista.ConfirmarBaja())
         {
             vista.BajaCancelada();
@@ -97,4 +104,40 @@ internal sealed class ControladorPersonas
         vista.BajaRealizada();
     }
 
+
+    private void MostrarPersona(Persona persona) =>
+        vista.MostrarPersona(persona, relaciones.EmpresaDePersona(persona.Id));
+
+    private void MostrarResultados(IReadOnlyList<Persona> personas, bool busqueda = false)
+    {
+        if (personas.Count == 0) vista.SinResultados(busqueda);
+        foreach (Persona persona in personas) MostrarPersona(persona);
+    }
+
+    private void AsignarEmpresa()
+    {
+        Persona? persona = Localizar();
+        if (persona is null) return;
+        MostrarPersona(persona);
+        int empresaId = vistaRelaciones.LeerEmpresaId();
+        Empresa? empresa = relaciones.BuscarEmpresa(empresaId);
+        if (empresa is null) { vistaRelaciones.EmpresaInexistente(); return; }
+        if (!empresa.Estado) { vistaRelaciones.EmpresaInactiva(); return; }
+        if (persona.EmpresaId == empresaId) { vistaRelaciones.YaAsignada(); return; }
+        vistaRelaciones.MostrarDestino(empresa);
+        if (!vistaRelaciones.ConfirmarAsignacion()) { vistaRelaciones.Cancelada(); return; }
+        vistaRelaciones.ResultadoAsignacion(relaciones.Asignar(persona.Id, empresaId));
+        MostrarPersona(persona);
+    }
+
+    private void DesvincularEmpresa()
+    {
+        Persona? persona = Localizar();
+        if (persona is null) return;
+        MostrarPersona(persona);
+        if (persona.EmpresaId is null) { vistaRelaciones.SinEmpresa(); return; }
+        if (!vistaRelaciones.ConfirmarDesvinculacion()) { vistaRelaciones.Cancelada(); return; }
+        vistaRelaciones.ResultadoDesvinculacion(relaciones.Desvincular(persona.Id));
+        MostrarPersona(persona);
+    }
 }

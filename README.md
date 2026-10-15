@@ -1,129 +1,98 @@
-# Fase 2 — Gestión de empresas
+# Fase 3 — Relación entre personas y empresas
 
-La entrega es independiente de Fase1 y conserva la gestión de personas.
+Entrega independiente basada en Fase 2, según los requisitos de la imagen del enunciado.
+Se conservan las operaciones de personas y empresas, el patrón MVC de consola y
+`Main` con una sola llamada a `ControladorAgenda.Iniciar()`.
 
 ## Ejecutar
 
-Desde la raíz del proyecto, con .NET 10:
+Desde la raíz `AgendaConsultora`:
 
 ```bash
-dotnet run --project Fase2/AgendaConsultora.csproj
+dotnet run --project Fase3/AgendaConsultora.csproj
 ```
 
-El menú principal permite entrar en Personas o Empresas. En ambos submenús,
-0 vuelve al principal; solo 0 en el principal cierra la aplicación.
+Requiere .NET 10. Los datos se mantienen en memoria durante la sesión.
 
-## Empresas
+## Nuevas operaciones
 
-- Alta con Id automático, nombre comercial, CIF, teléfono, correo y dirección.
-- Todos esos campos son obligatorios. El CIF se comprueba como texto no vacío;
-  no se exige una comprobación fiscal ni se consulta un registro oficial.
-- Correo y teléfono reutilizan las validaciones de Fase1 (teléfono de 9 dígitos).
-- Listado ordenado por nombre comercial y búsquedas por Id, nombre o CIF.
-- Modificación con ficha actual, propuesta y confirmación; cancelar no cambia datos.
-- `Estado` es booleano: `true` indica activa y `false` indica inactiva.
-- Baja con confirmación: cambia exclusivamente `Estado` a `false`. No se elimina
-  el objeto de la colección, no se borran personas y no se usa DELETE.
-- La ficha muestra si la baja está disponible. Si tiene personas asociadas, no
-  se solicita confirmación ni se permite desactivarla. El gestor vuelve a comprobarlo.
-- La opción Reactivar cambia `Estado` a `true` tras confirmar, conservando el Id.
-- Se muestran y buscan tanto activas como inactivas, con estado explícito.
-  Modificar una inactiva no la reactiva automáticamente.
+En el menú Personas:
 
-## Relación preparada
+- **6. Asignar o cambiar empresa:** introduce el Id de una persona y el de una
+  empresa existentes. Muestra la empresa de destino y pide confirmación. La empresa
+  debe estar activa. Asignar otra sustituye la relación anterior: nunca se acumulan
+  varias empresas en una persona.
+- **7. Desvincular empresa:** muestra la persona y pide confirmación. Su EmpresaId
+  pasa a null y conserva el resto de sus datos.
+- El listado, las búsquedas y las fichas muestran el nombre e Id de la empresa
+  asociada, o indican que no tiene empresa asignada.
 
-`Persona.EmpresaId` y `GestorPersonas.TieneRelacionConEmpresa` permiten comprobar
-relaciones reales. `VincularEmpresa` prepara la asociación a una empresa activa
-para la siguiente fase; no se ha añadido una opción de vinculación al menú.
-Por tanto, las empresas creadas desde esta consola inicialmente no tienen relaciones.
-Las pruebas de servicios crean una relación y verifican que bloquea la baja.
-Modificar los datos de una persona conserva su EmpresaId.
+En el menú Empresas:
 
-La baja de personas conserva el comportamiento de Fase1. La regla de conservación
-mediante Estado se aplica a empresas, conforme al alcance de este añadido.
-Los datos siguen en memoria y se pierden al cerrar la aplicación.
+- **7. Ver personas de una empresa:** solicita su Id y muestra su plantilla ordenada
+  por apellidos y nombre. Si no hay personas, lo indica expresamente.
+- Se mantienen la baja lógica y la reactivación.
 
-## Estructura MVC de consola
+En los submenús, 0 vuelve al principal. Solo 0 en el principal termina la aplicación.
 
-```text
-Fase2/
-├── Program.cs
-├── Models/
-│   ├── Persona.cs
-│   ├── Empresa.cs
-│   ├── Services/
-│   │   ├── GestorPersonas.cs
-│   │   └── GestorEmpresas.cs
-│   └── Validation/Validador.cs
-├── Views/
-│   ├── VistaAgenda.cs
-│   ├── VistaPersonas.cs
-│   ├── VistaEmpresas.cs
-│   └── Entrada.cs
-├── Controllers/
-│   ├── ControladorAgenda.cs
-│   ├── ControladorPersonas.cs
-│   └── ControladorEmpresas.cs
-├── pruebas/
-└── evidencias/
-```
+## Política para empresas relacionadas
 
-- **Modelo:** entidades, colecciones, validaciones y reglas de negocio, incluido
-  el bloqueo de baja y el campo Estado. No accede a la consola.
-- **Vista:** todos los textos visibles, preguntas, menús, fichas, confirmaciones,
-  formato y lectura de consola. Valida las entradas usando las reglas del modelo.
-  No accede a los gestores ni modifica registros.
-- **Controlador:** decide qué operación ejecutar, consulta o modifica el modelo
-  y pide a la vista que recoja o muestre datos. No contiene textos de interfaz
-  ni llamadas a Console.
-- **Program:** Main contiene una única llamada a `ControladorAgenda.Iniciar()`.
-  Ese método crea los gestores compartidos, las vistas y los controladores, y
-  arranca el flujo de navegación. También se controla el fin de entrada.
+**No se permite desactivar una empresa mientras tenga personas asociadas.**
+Se deben desvincular o trasladar antes esas personas. La interfaz informa del bloqueo
+sin solicitar confirmación de baja, y el gestor comprueba la misma condición.
+Cuando no quedan relaciones, la baja cambia únicamente `Estado = false`.
+No se elimina el registro de empresa ni se borran personas en cascada.
+La reactivación cambia `Estado = true` y conserva el mismo Id y datos.
 
-Las excepciones de argumentos del modelo son diagnósticos internos; los mensajes
-que se muestran al usuario están en Views. La Fase 1 conserva su estructura original.
+## Diseño
 
-## Verificación
+- `Models/Persona.cs`: `int? EmpresaId` expresa cero o una empresa por persona.
+- `Models/Services/GestorRelaciones.cs`: comprueba ambos identificadores al asignar,
+  impide la asignación de empresas inactivas y permite consultar o quitar la relación.
+- `GestorPersonas.ListarPorEmpresa`: calcula la plantilla desde las personas, sin
+  mantener una segunda lista de relaciones que pudiera desincronizarse.
+- La modificación de datos personales conserva EmpresaId. El cambio de nombre de
+  empresa aparece en las consultas porque se resuelve su Id al mostrar la ficha.
+- `Controllers/`: coordina gestores, confirmaciones y consultas, sin textos ni Console.
+- `Views/`: textos, lectura y presentación. `VistaRelaciones` contiene los mensajes
+  de asignación y desvinculación; las vistas no acceden a los gestores.
+- `Program.cs`: arranque mediante una sola llamada.
+
+## Verificación reproducible
+
+Desde la raíz:
 
 ```bash
 dotnet build Fase2/AgendaConsultora.csproj -warnaserror
-python3 Fase2/pruebas/verificar.py
-dotnet run --project Fase2/pruebas/Servicios/Servicios.csproj
-dotnet build Fase2/AgendaConsultora.csproj --configuration Release -warnaserror
-```
-
-Resultado: 23 escenarios de consola, 21 comprobaciones de servicios y compilación
-Debug/Release con 0 errores y 0 advertencias. También se han repetido satisfactoriamente
-los 64 escenarios de la entrega Fase1.
-
-| Prueba manual | Resultado esperado |
-|---|---|
-| Entrar en Personas, volver, entrar en Empresas y volver | La aplicación continúa en el menú principal |
-| Alta con nombre o CIF vacío | Se vuelve a pedir el campo |
-| Correo o teléfono inválido | Rechazo y nueva solicitud |
-| Buscar un Id inexistente | Mensaje claro, sin cambios |
-| Modificar y contestar N | Se conserva la ficha anterior |
-| Dar de baja sin relaciones y contestar S | Mismo Id y datos, Estado Inactiva |
-| Buscar la empresa inactiva | Se encuentra y muestra su estado |
-| Reactivar y contestar S | Mismo Id y datos, Estado Activa |
-| Baja con relaciones (prueba de servicios) | Bloqueada; Estado sigue siendo true |
-| Escribir texto o una opción inexistente en un menú | Mensaje de error y nueva solicitud |
-
-Para reproducir la demostración:
-
-```bash
-dotnet run --project Fase2/AgendaConsultora.csproj --no-build < Fase2/evidencias/entrada-demo.txt
-```
-
-## Diez pruebas de aceptación de Fase 2
-
-Desde la raíz, después de compilar Fase2 y Fase3:
-
-```bash
+dotnet build Fase3/AgendaConsultora.csproj -warnaserror
 python3 pruebas/verificar_10_por_fase.py
+python3 Fase2/pruebas/verificar.py
+python3 Fase3/pruebas/verificar.py
+dotnet run --project Fase2/pruebas/Servicios/Servicios.csproj
+dotnet run --project Fase3/pruebas/Servicios/Servicios.csproj
 ```
 
-Las diez pruebas de esta fase cubren navegación y entradas inválidas, validaciones
-obligatorias, listado vacío/ordenado, búsqueda, modificación confirmada/cancelada,
-baja lógica, reactivación, cancelación de baja y continuidad de la gestión de personas.
-El resultado está en `evidencias/aceptacion-10-pruebas.txt`.
+Se han ejecutado diez pruebas de aceptación distintas en Fase 2 y diez en Fase 3.
+Cada prueba puede contener varias ejecuciones y aserciones para cubrir resultados,
+cancelaciones y errores. Los informes están en `evidencias/aceptacion-10-pruebas.txt`
+de cada fase; el código reproducible está en `pruebas/verificar_10_por_fase.py` de la raíz.
+
+Además, ambas fases superan sus 23 escenarios heredados de consola; Fase 2 supera
+21 comprobaciones de servicios y Fase 3 supera 31, incluidas diez de relaciones.
+Las dos fases compilan en Debug y Release sin errores ni advertencias.
+
+| Prueba Fase 3 | Resultado esperado |
+|---|---|
+| Persona recién creada | Sin empresa asignada |
+| Asignación válida | Empresa visible en ficha, búsqueda y listado |
+| Cambio de empresa | Desaparece de la plantilla anterior y aparece en la nueva |
+| Desvinculación | Mantiene nombre, correo y teléfono; queda sin empresa |
+| Empresa con cero o varias personas | Mensaje de plantilla vacía o listado ordenado |
+| Baja con personas | Bloqueada, empresa sigue activa |
+| Desvincular, desactivar y reactivar | Misma empresa conservada; se puede reasignar |
+| Id inválido/inexistente o empresa inactiva | Rechazo sin crear una relación |
+| Cancelación o fin de entrada | No guarda la asignación pendiente |
+| Modificar datos personales o empresa | Conserva la relación y refleja los datos actualizados |
+
+Las pruebas cubren los requisitos y escenarios indicados, sin prometer ausencia
+absoluta de cualquier posible defecto.

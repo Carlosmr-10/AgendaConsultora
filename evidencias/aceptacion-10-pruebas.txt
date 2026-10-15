@@ -1,11 +1,11 @@
-OK - 01 Navegación y opciones inválidas
-OK - 02 Alta y validaciones de empresa
-OK - 03 Listado vacío y ordenado
-OK - 04 Búsquedas por Id, nombre, CIF e inexistente
-OK - 05 Modificación confirmada
-OK - 06 Modificación cancelada sin cambios
-OK - 07 Baja lógica conserva registro
-OK - 08 Reactivación conserva identidad
-OK - 09 Cancelación de baja y confirmación inválida
-OK - 10 Gestión de personas conservada
+OK - 01 Persona sin empresa por defecto
+OK - 02 Asignar por Id y mostrar relación en consultas/listado
+OK - 03 Cambiar empresa deja una única asociación
+OK - 04 Desvincular conserva datos y permite quedar sin empresa
+OK - 05 Empresa con cero o varias personas; plantilla ordenada
+OK - 06 Baja bloqueada mientras existan relaciones
+OK - 07 Desvincular desbloquea baja y reactivación permite reasignar
+OK - 08 Id inválidos/inexistentes y empresa inactiva sin cambios
+OK - 09 Cancelación y fin de entrada no alteran relaciones
+OK - 10 Modificar persona/empresa conserva relación y actualiza consultas
 Total: 10/10 pruebas superadas.
