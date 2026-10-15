@@ -3,6 +3,7 @@ namespace AgendaConsultora.Models;
 public sealed class Persona
 {
     public int Id { get; }
+    public int? EmpresaId { get; internal set; }
     public string Nombre { get; }
     public string Apellidos { get; }
     public string Correo { get; }

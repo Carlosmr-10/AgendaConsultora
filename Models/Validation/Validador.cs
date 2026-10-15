@@ -1,7 +1,7 @@
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 
-namespace AgendaConsultora.Helpers;
+namespace AgendaConsultora.Models.Validation;
 
 public static class Validador
 {

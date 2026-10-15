@@ -1,0 +1,11 @@
+OK - 01 Navegación y opciones inválidas
+OK - 02 Alta y validaciones de empresa
+OK - 03 Listado vacío y ordenado
+OK - 04 Búsquedas por Id, nombre, CIF e inexistente
+OK - 05 Modificación confirmada
+OK - 06 Modificación cancelada sin cambios
+OK - 07 Baja lógica conserva registro
+OK - 08 Reactivación conserva identidad
+OK - 09 Cancelación de baja y confirmación inválida
+OK - 10 Gestión de personas conservada
+Total: 10/10 pruebas superadas.

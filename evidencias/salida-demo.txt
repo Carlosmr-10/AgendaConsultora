@@ -1,110 +1,188 @@
 Datos en memoria: se perderán al cerrar la aplicación.
 
-=== AGENDA CONSULTORA — FASE 1 ===
-1. Dar de alta una persona
-2. Listar personas
-3. Buscar persona
-4. Modificar persona
-5. Dar de baja una persona
+=== AGENDA CONSULTORA ===
+1. Gestión de personas
+2. Gestión de empresas
 0. Salir
+Selecciona una opción: 
+=== EMPRESAS ===
+1. Alta
+2. Listar (activas e inactivas)
+3. Buscar
+4. Modificar
+5. Dar de baja (solo sin relaciones)
+6. Reactivar
+0. Volver al menú principal
 Selecciona una opción: Todos los campos son obligatorios.
-Nombre: Apellidos: Correo: Teléfono (9 dígitos sin separadores): Alta realizada correctamente.
+Nombre comercial: CIF: Teléfono (9 dígitos): Correo: Dirección: Alta de empresa realizada correctamente.
 Id: 1
-Nombre: Ana Zamora
-Correo: ana@consultora.es
-Teléfono: 612345678
+Nombre comercial: Zeta
+CIF: B12345678
+Teléfono: 912345678
+Correo: zeta@consultora.es
+Dirección: Calle Uno
+Estado: Activa
+Baja disponible: Sí
 ----------------------------------------
 
-=== AGENDA CONSULTORA — FASE 1 ===
-1. Dar de alta una persona
-2. Listar personas
-3. Buscar persona
-4. Modificar persona
-5. Dar de baja una persona
-0. Salir
-Selecciona una opción: Todos los campos son obligatorios.
-Nombre: Apellidos: Correo: Teléfono (9 dígitos sin separadores): Alta realizada correctamente.
-Id: 2
-Nombre: Luis Alonso
-Correo: luis@consultora.es
-Teléfono: 623456789
-----------------------------------------
-
-=== AGENDA CONSULTORA — FASE 1 ===
-1. Dar de alta una persona
-2. Listar personas
-3. Buscar persona
-4. Modificar persona
-5. Dar de baja una persona
-0. Salir
-Selecciona una opción: Id: 2
-Nombre: Luis Alonso
-Correo: luis@consultora.es
-Teléfono: 623456789
-----------------------------------------
+=== EMPRESAS ===
+1. Alta
+2. Listar (activas e inactivas)
+3. Buscar
+4. Modificar
+5. Dar de baja (solo sin relaciones)
+6. Reactivar
+0. Volver al menú principal
+Selecciona una opción: Id de la empresa: Datos actuales:
 Id: 1
-Nombre: Ana Zamora
-Correo: ana@consultora.es
-Teléfono: 612345678
+Nombre comercial: Zeta
+CIF: B12345678
+Teléfono: 912345678
+Correo: zeta@consultora.es
+Dirección: Calle Uno
+Estado: Activa
+Baja disponible: Sí
 ----------------------------------------
-
-=== AGENDA CONSULTORA — FASE 1 ===
-1. Dar de alta una persona
-2. Listar personas
-3. Buscar persona
-4. Modificar persona
-5. Dar de baja una persona
-0. Salir
-Selecciona una opción: 1. Buscar por Id
-2. Buscar por nombre y apellidos
-Tipo de búsqueda: Nombre o apellidos (admite partes): Id: 2
-Nombre: Luis Alonso
-Correo: luis@consultora.es
-Teléfono: 623456789
-----------------------------------------
-
-=== AGENDA CONSULTORA — FASE 1 ===
-1. Dar de alta una persona
-2. Listar personas
-3. Buscar persona
-4. Modificar persona
-5. Dar de baja una persona
-0. Salir
-Selecciona una opción: Id de la persona: Datos actuales:
-Id: 1
-Nombre: Ana Zamora
-Correo: ana@consultora.es
-Teléfono: 612345678
-----------------------------------------
-Introduce todos los datos nuevos, repitiendo los que quieras conservar.
+Introduce los datos nuevos, repitiendo los que quieras conservar.
 Todos los campos son obligatorios.
-Nombre: Apellidos: Correo: Teléfono (9 dígitos sin separadores): Propuesta para Id 1: Ana Zamora | ana.nueva@consultora.es | 612345678
-¿Guardar los cambios? (S/SI/N/NO): Modificación realizada correctamente.
+Nombre comercial: CIF: Teléfono (9 dígitos): Correo: Dirección: Propuesta: Alfa | B12345678 | 912345678 | alfa@consultora.es | Calle Dos
+¿Guardar los cambios? (S/SI/N/NO): Empresa modificada correctamente.
+Id: 1
+Nombre comercial: Alfa
+CIF: B12345678
+Teléfono: 912345678
+Correo: alfa@consultora.es
+Dirección: Calle Dos
+Estado: Activa
+Baja disponible: Sí
+----------------------------------------
+
+=== EMPRESAS ===
+1. Alta
+2. Listar (activas e inactivas)
+3. Buscar
+4. Modificar
+5. Dar de baja (solo sin relaciones)
+6. Reactivar
+0. Volver al menú principal
+Selecciona una opción: Id de la empresa: Id: 1
+Nombre comercial: Alfa
+CIF: B12345678
+Teléfono: 912345678
+Correo: alfa@consultora.es
+Dirección: Calle Dos
+Estado: Activa
+Baja disponible: Sí
+----------------------------------------
+¿Desactivar esta empresa sin borrar su registro? (S/SI/N/NO): Estado actualizado correctamente.
+Id: 1
+Nombre comercial: Alfa
+CIF: B12345678
+Teléfono: 912345678
+Correo: alfa@consultora.es
+Dirección: Calle Dos
+Estado: Inactiva
+Baja disponible: No
+----------------------------------------
+
+=== EMPRESAS ===
+1. Alta
+2. Listar (activas e inactivas)
+3. Buscar
+4. Modificar
+5. Dar de baja (solo sin relaciones)
+6. Reactivar
+0. Volver al menú principal
+Selecciona una opción: Id: 1
+Nombre comercial: Alfa
+CIF: B12345678
+Teléfono: 912345678
+Correo: alfa@consultora.es
+Dirección: Calle Dos
+Estado: Inactiva
+Baja disponible: No
+----------------------------------------
+
+=== EMPRESAS ===
+1. Alta
+2. Listar (activas e inactivas)
+3. Buscar
+4. Modificar
+5. Dar de baja (solo sin relaciones)
+6. Reactivar
+0. Volver al menú principal
+Selecciona una opción: Id de la empresa: Id: 1
+Nombre comercial: Alfa
+CIF: B12345678
+Teléfono: 912345678
+Correo: alfa@consultora.es
+Dirección: Calle Dos
+Estado: Inactiva
+Baja disponible: No
+----------------------------------------
+¿Reactivar esta empresa? (S/SI/N/NO): Estado actualizado correctamente.
+Id: 1
+Nombre comercial: Alfa
+CIF: B12345678
+Teléfono: 912345678
+Correo: alfa@consultora.es
+Dirección: Calle Dos
+Estado: Activa
+Baja disponible: Sí
+----------------------------------------
+
+=== EMPRESAS ===
+1. Alta
+2. Listar (activas e inactivas)
+3. Buscar
+4. Modificar
+5. Dar de baja (solo sin relaciones)
+6. Reactivar
+0. Volver al menú principal
+Selecciona una opción: 
+=== AGENDA CONSULTORA ===
+1. Gestión de personas
+2. Gestión de empresas
+0. Salir
+Selecciona una opción: 
+=== PERSONAS ===
+1. Dar de alta una persona
+2. Listar personas
+3. Buscar persona
+4. Modificar persona
+5. Dar de baja una persona
+0. Volver al menú principal
+Selecciona una opción: Todos los campos son obligatorios.
+Nombre: Apellidos: Correo: Teléfono (9 dígitos sin separadores): Alta realizada correctamente.
 Id: 1
 Nombre: Ana Zamora
-Correo: ana.nueva@consultora.es
+Correo: ana@consultora.es
 Teléfono: 612345678
 ----------------------------------------
 
-=== AGENDA CONSULTORA — FASE 1 ===
+=== PERSONAS ===
 1. Dar de alta una persona
 2. Listar personas
 3. Buscar persona
 4. Modificar persona
 5. Dar de baja una persona
-0. Salir
-Selecciona una opción: Id de la persona: Id: 2
-Nombre: Luis Alonso
-Correo: luis@consultora.es
-Teléfono: 623456789
+0. Volver al menú principal
+Selecciona una opción: Id: 1
+Nombre: Ana Zamora
+Correo: ana@consultora.es
+Teléfono: 612345678
 ----------------------------------------
-¿Eliminar esta persona? (S/SI/N/NO): Baja realizada correctamente.
 
-=== AGENDA CONSULTORA — FASE 1 ===
+=== PERSONAS ===
 1. Dar de alta una persona
 2. Listar personas
 3. Buscar persona
 4. Modificar persona
 5. Dar de baja una persona
+0. Volver al menú principal
+Selecciona una opción: 
+=== AGENDA CONSULTORA ===
+1. Gestión de personas
+2. Gestión de empresas
 0. Salir
 Selecciona una opción: Hasta pronto.

@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using AgendaConsultora.Helpers;
+using AgendaConsultora.Models.Validation;
 using AgendaConsultora.Models;
 
-namespace AgendaConsultora.Services;
+namespace AgendaConsultora.Models.Services;
 
 public sealed class GestorPersonas
 {
@@ -40,7 +40,21 @@ public sealed class GestorPersonas
         int indice = personas.FindIndex(p => p.Id == id);
         if (indice < 0)
             return false;
-        personas[indice] = CrearPersona(id, nombre, apellidos, correo, telefono);
+        Persona propuesta = CrearPersona(id, nombre, apellidos, correo, telefono);
+        propuesta.EmpresaId = personas[indice].EmpresaId;
+        personas[indice] = propuesta;
+        return true;
+    }
+
+    public bool TieneRelacionConEmpresa(int empresaId) => personas.Any(p => p.EmpresaId == empresaId);
+
+    // Preparación para la siguiente fase; todavía no se ofrece vinculación en el menú.
+    public bool VincularEmpresa(int personaId, Empresa empresa)
+    {
+        Persona? persona = BuscarPorId(personaId);
+        if (persona is null || !empresa.Estado)
+            return false;
+        persona.EmpresaId = empresa.Id;
         return true;
     }
 
