@@ -1,7 +1,7 @@
-namespace AgendaConsultora.Models;
+namespace AgendaProfesional.Models;
 
 public sealed record DatosEmpresa(
-    string Nombre,
+    string NombreComercial,
     string Cif,
     string Telefono,
     string Correo,

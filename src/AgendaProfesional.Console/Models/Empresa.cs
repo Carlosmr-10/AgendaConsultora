@@ -1,4 +1,4 @@
-namespace AgendaConsultora.Models;
+namespace AgendaProfesional.Models;
 
 public sealed class Empresa
 {
@@ -10,10 +10,16 @@ public sealed class Empresa
     public string Direccion { get; internal set; }
     public bool Estado { get; internal set; } = true;
 
-    internal Empresa(int id, string nombre, string cif, string telefono, string correo, string direccion)
+    internal Empresa(
+        int id,
+        string nombreComercial,
+        string cif,
+        string telefono,
+        string correo,
+        string direccion)
     {
         Id = id;
-        NombreComercial = nombre;
+        NombreComercial = nombreComercial;
         Cif = cif;
         Telefono = telefono;
         Correo = correo;

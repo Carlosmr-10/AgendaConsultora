@@ -1,4 +1,4 @@
-namespace AgendaConsultora.Models;
+namespace AgendaProfesional.Models;
 
 public sealed record DatosPersona(
     string Nombre,

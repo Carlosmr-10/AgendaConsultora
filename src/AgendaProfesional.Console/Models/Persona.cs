@@ -1,13 +1,13 @@
-namespace AgendaConsultora.Models;
+namespace AgendaProfesional.Models;
 
 public sealed class Persona
 {
     public int Id { get; }
-    public int? EmpresaId { get; internal set; }
-    public string Nombre { get; }
-    public string Apellidos { get; }
-    public string Correo { get; }
-    public string Telefono { get; }
+    public string Nombre { get; internal set; }
+    public string Apellidos { get; internal set; }
+    public string Correo { get; internal set; }
+    public string Telefono { get; internal set; }
+    public int? IdEmpresa { get; internal set; }
 
     internal Persona(int id, string nombre, string apellidos, string correo, string telefono)
     {

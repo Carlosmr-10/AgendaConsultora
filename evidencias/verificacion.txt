@@ -1,24 +1,20 @@
-OK: Navegación sin cerrar
-OK: Menús inválidos
-OK: Listado vacío
-OK: Campos obligatorios y formatos
-OK: Buscar 1: 1
-OK: Buscar 2: ZET
-OK: Buscar 2: b123
-OK: Id inexistente 4
-OK: Id inexistente 5
-OK: Id inexistente 6
-OK: Modificar confirmada
-OK: Modificar cancelada
-OK: Baja cancelada
-OK: Baja conserva registro y reactivación
-OK: Ordenación
-OK: Personas CRUD y conservación al cambiar menú
-OK: EOF alta empresa 1
-OK: EOF alta empresa 2
-OK: EOF alta empresa 3
-OK: EOF alta empresa 4
-OK: EOF alta empresa 5
-OK: EOF alta empresa 6
-OK: Demostración completa
-23 escenarios de consola superados.
+Fase 5 — verificación
+
+OK - Estructura profesional con solución y proyecto en src.
+OK - Persona contiene IdEmpresa opcional.
+OK - Empresa contiene Estado y la baja lógica no elimina registros.
+OK - AgendaService es propietario de las colecciones y contiene las operaciones de negocio.
+OK - ConsoleUI muestra menús, solicita datos y presenta resultados sin gestionar las colecciones.
+OK - InputValidator centraliza lectura y validación.
+OK - Program inicializa AgendaService y ConsoleUI en una sola instrucción.
+OK - 38 comprobaciones de servicio superadas.
+OK - 10/10 escenarios de aceptación de consola superados.
+OK - Demostración completa equivalente a Fase 4 salvo el título.
+OK - Compilación Debug: 0 advertencias y 0 errores.
+OK - Compilación Release: 0 advertencias y 0 errores.
+OK - Formato de C# verificado sin cambios pendientes.
+OK - Regresión Fase 1: 64 escenarios superados.
+OK - Regresión Fases 2, 3 y 4: 23 escenarios de consola por fase superados.
+OK - Servicios Fase 2: 21 comprobaciones superadas.
+OK - Servicios Fases 3 y 4: 31 comprobaciones por fase superadas.
+OK - Matriz de 10 casos para Fase 2 y 10 casos para Fase 3 superada (20/20).
