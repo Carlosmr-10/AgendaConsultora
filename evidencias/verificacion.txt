@@ -1,0 +1,66 @@
+Pruebas automáticas de consola mediante entrada redirigida:
+OK - Listado vacío
+OK - Alta válida
+OK - Correo rechazado: ''
+OK - Correo rechazado: 'correo'
+OK - Correo rechazado: 'correo@'
+OK - Correo rechazado: '@dominio.com'
+OK - Correo rechazado: 'correo@dominio'
+OK - Correo rechazado: 'a@@dominio.es'
+OK - Correo rechazado: 'Ana <ana@consultora.es>'
+OK - Correo rechazado: 'ana.@consultora.es'
+OK - Correo rechazado: '.ana@consultora.es'
+OK - Correo rechazado: 'a..b@consultora.es'
+OK - Correo rechazado: 'ana@-consultora.es'
+OK - Correo rechazado: 'ana@consultora-.es'
+OK - Correo rechazado: 'ana@consultora..es'
+OK - Teléfono rechazado: ''
+OK - Teléfono rechazado: 'abcdefghi'
+OK - Teléfono rechazado: '12345678'
+OK - Teléfono rechazado: '1234567890'
+OK - Teléfono rechazado: '12345678a'
+OK - Nombres obligatorios
+OK - Listado ordenado
+OK - Búsqueda por Id
+OK - Búsqueda parcial y mayúsculas
+OK - Búsqueda sin resultados
+OK - Id inexistente en 3
+OK - Id inexistente en 4
+OK - Id inexistente en 5
+OK - Modificación confirmada
+OK - Modificación cancelada
+OK - Baja confirmada
+OK - Baja cancelada
+OK - Confirmación inválida
+OK - Menú robusto
+OK - Id robusto
+OK - Id no reutilizado
+OK - EOF durante alta
+OK - EOF en confirmación
+OK - Demostración completa
+OK - Coincidencia comprobada: ANA
+OK - Coincidencia comprobada: zam
+OK - Coincidencia comprobada: Ana Zamora
+OK - Coincidencia comprobada: ZAM an
+OK - Id encontrado tras la consulta
+OK - Varios resultados parciales
+OK - Revalidar correo y teléfono al modificar
+OK - Confirmación afirmativa 's'
+OK - Confirmación afirmativa 'si'
+OK - Confirmación afirmativa 'Sí'
+OK - Confirmación afirmativa '  SI  '
+OK - Confirmación negativa 'n'
+OK - Confirmación negativa 'no'
+OK - Confirmación negativa '  No  '
+OK - Correo con subdominio y etiqueta
+OK - Normalización de espacios
+OK - Submenú y búsqueda vacía
+OK - Estado nuevo por sesión
+OK - EOF durante modificación 1
+OK - EOF durante modificación 2
+OK - EOF durante modificación 3
+OK - EOF durante modificación 4
+OK - EOF durante modificación 5
+OK - EOF durante modificación 6
+OK - Secuencia de 25 altas y 13 bajas
+Total: 64 escenarios superados.

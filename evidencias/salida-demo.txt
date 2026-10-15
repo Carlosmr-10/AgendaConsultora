@@ -1,0 +1,110 @@
+Datos en memoria: se perderán al cerrar la aplicación.
+
+=== AGENDA CONSULTORA — FASE 1 ===
+1. Dar de alta una persona
+2. Listar personas
+3. Buscar persona
+4. Modificar persona
+5. Dar de baja una persona
+0. Salir
+Selecciona una opción: Todos los campos son obligatorios.
+Nombre: Apellidos: Correo: Teléfono (9 dígitos sin separadores): Alta realizada correctamente.
+Id: 1
+Nombre: Ana Zamora
+Correo: ana@consultora.es
+Teléfono: 612345678
+----------------------------------------
+
+=== AGENDA CONSULTORA — FASE 1 ===
+1. Dar de alta una persona
+2. Listar personas
+3. Buscar persona
+4. Modificar persona
+5. Dar de baja una persona
+0. Salir
+Selecciona una opción: Todos los campos son obligatorios.
+Nombre: Apellidos: Correo: Teléfono (9 dígitos sin separadores): Alta realizada correctamente.
+Id: 2
+Nombre: Luis Alonso
+Correo: luis@consultora.es
+Teléfono: 623456789
+----------------------------------------
+
+=== AGENDA CONSULTORA — FASE 1 ===
+1. Dar de alta una persona
+2. Listar personas
+3. Buscar persona
+4. Modificar persona
+5. Dar de baja una persona
+0. Salir
+Selecciona una opción: Id: 2
+Nombre: Luis Alonso
+Correo: luis@consultora.es
+Teléfono: 623456789
+----------------------------------------
+Id: 1
+Nombre: Ana Zamora
+Correo: ana@consultora.es
+Teléfono: 612345678
+----------------------------------------
+
+=== AGENDA CONSULTORA — FASE 1 ===
+1. Dar de alta una persona
+2. Listar personas
+3. Buscar persona
+4. Modificar persona
+5. Dar de baja una persona
+0. Salir
+Selecciona una opción: 1. Buscar por Id
+2. Buscar por nombre y apellidos
+Tipo de búsqueda: Nombre o apellidos (admite partes): Id: 2
+Nombre: Luis Alonso
+Correo: luis@consultora.es
+Teléfono: 623456789
+----------------------------------------
+
+=== AGENDA CONSULTORA — FASE 1 ===
+1. Dar de alta una persona
+2. Listar personas
+3. Buscar persona
+4. Modificar persona
+5. Dar de baja una persona
+0. Salir
+Selecciona una opción: Id de la persona: Datos actuales:
+Id: 1
+Nombre: Ana Zamora
+Correo: ana@consultora.es
+Teléfono: 612345678
+----------------------------------------
+Introduce todos los datos nuevos, repitiendo los que quieras conservar.
+Todos los campos son obligatorios.
+Nombre: Apellidos: Correo: Teléfono (9 dígitos sin separadores): Propuesta para Id 1: Ana Zamora | ana.nueva@consultora.es | 612345678
+¿Guardar los cambios? (S/SI/N/NO): Modificación realizada correctamente.
+Id: 1
+Nombre: Ana Zamora
+Correo: ana.nueva@consultora.es
+Teléfono: 612345678
+----------------------------------------
+
+=== AGENDA CONSULTORA — FASE 1 ===
+1. Dar de alta una persona
+2. Listar personas
+3. Buscar persona
+4. Modificar persona
+5. Dar de baja una persona
+0. Salir
+Selecciona una opción: Id de la persona: Id: 2
+Nombre: Luis Alonso
+Correo: luis@consultora.es
+Teléfono: 623456789
+----------------------------------------
+¿Eliminar esta persona? (S/SI/N/NO): Baja realizada correctamente.
+
+=== AGENDA CONSULTORA — FASE 1 ===
+1. Dar de alta una persona
+2. Listar personas
+3. Buscar persona
+4. Modificar persona
+5. Dar de baja una persona
+0. Salir
+Selecciona una opción: Hasta pronto.
