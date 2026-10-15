@@ -14,7 +14,8 @@ public sealed class GestorEmpresas
 
     public Empresa Alta(string nombre, string cif, string telefono, string correo, string direccion)
     {
-        Empresa empresa = Validar(siguienteId, nombre, cif, telefono, correo, direccion);
+        DatosEmpresa datos = NormalizarDatos(nombre, cif, telefono, correo, direccion);
+        Empresa empresa = CrearEmpresaValidada(siguienteId, datos);
         siguienteId = checked(siguienteId + 1);
         empresas.Add(empresa);
         return empresa;
@@ -35,22 +36,21 @@ public sealed class GestorEmpresas
     {
         Empresa? empresa = BuscarPorId(id);
         if (empresa is null) return false;
-        Empresa propuesta = Validar(id, nombre, cif, telefono, correo, direccion);
-        empresa.NombreComercial = propuesta.NombreComercial;
-        empresa.Cif = propuesta.Cif;
-        empresa.Telefono = propuesta.Telefono;
-        empresa.Correo = propuesta.Correo;
-        empresa.Direccion = propuesta.Direccion;
+
+        DatosEmpresa datos = NormalizarDatos(nombre, cif, telefono, correo, direccion);
+        ValidarDatos(datos);
+        AplicarDatos(empresa, datos);
         return true;
     }
 
-    public bool PuedeDesactivar(int id) => BuscarPorId(id) is { Estado: true }
-        && !personas.TieneRelacionConEmpresa(id);
+    public bool PuedeDesactivar(int id) => PuedeDesactivar(BuscarPorId(id));
 
     public bool Desactivar(int id)
     {
-        if (!PuedeDesactivar(id)) return false;
-        BuscarPorId(id)!.Estado = false;
+        Empresa? empresa = BuscarPorId(id);
+        if (!PuedeDesactivar(empresa)) return false;
+
+        empresa!.Estado = false;
         return true;
     }
 
@@ -62,17 +62,44 @@ public sealed class GestorEmpresas
         return true;
     }
 
-    private static Empresa Validar(int id, string nombre, string cif, string telefono, string correo, string direccion)
+    private bool PuedeDesactivar(Empresa? empresa) =>
+        empresa is { Estado: true } && !personas.TieneRelacionConEmpresa(empresa.Id);
+
+    private static DatosEmpresa NormalizarDatos(
+        string nombre,
+        string cif,
+        string telefono,
+        string correo,
+        string direccion) => new(
+            nombre.Trim(),
+            cif.Trim(),
+            telefono.Trim(),
+            correo.Trim(),
+            direccion.Trim());
+
+    private static Empresa CrearEmpresaValidada(int id, DatosEmpresa datos)
     {
-        nombre = nombre.Trim();
-        cif = cif.Trim();
-        telefono = telefono.Trim();
-        correo = correo.Trim();
-        direccion = direccion.Trim();
-        if (!Validador.TextoObligatorio(nombre) || !Validador.TextoObligatorio(cif)
-            || !Validador.TextoObligatorio(direccion) || !Validador.TelefonoValido(telefono)
-            || !Validador.CorreoValido(correo))
+        ValidarDatos(datos);
+        return new Empresa(
+            id, datos.Nombre, datos.Cif, datos.Telefono, datos.Correo, datos.Direccion);
+    }
+
+    private static void ValidarDatos(DatosEmpresa datos)
+    {
+        if (!Validador.TextoObligatorio(datos.Nombre)
+            || !Validador.TextoObligatorio(datos.Cif)
+            || !Validador.TextoObligatorio(datos.Direccion)
+            || !Validador.TelefonoValido(datos.Telefono)
+            || !Validador.CorreoValido(datos.Correo))
             throw new ArgumentException("Los datos de la empresa no son válidos.");
-        return new Empresa(id, nombre, cif, telefono, correo, direccion);
+    }
+
+    private static void AplicarDatos(Empresa empresa, DatosEmpresa datos)
+    {
+        empresa.NombreComercial = datos.Nombre;
+        empresa.Cif = datos.Cif;
+        empresa.Telefono = datos.Telefono;
+        empresa.Correo = datos.Correo;
+        empresa.Direccion = datos.Direccion;
     }
 }

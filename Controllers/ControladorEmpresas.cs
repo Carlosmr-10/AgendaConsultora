@@ -9,32 +9,44 @@ internal sealed class ControladorEmpresas
     private readonly GestorEmpresas gestor;
     private readonly VistaEmpresas vista;
     private readonly GestorPersonas personas;
-    public ControladorEmpresas(GestorEmpresas gestor, VistaEmpresas vista, GestorPersonas personas)
+    private readonly VistaPersonas vistaPersonas;
+
+    public ControladorEmpresas(
+        GestorEmpresas gestor,
+        VistaEmpresas vista,
+        GestorPersonas personas,
+        VistaPersonas vistaPersonas)
     {
         this.gestor = gestor;
         this.vista = vista;
         this.personas = personas;
+        this.vistaPersonas = vistaPersonas;
     }
 
     public void Ejecutar()
     {
-        while (true)
+        while (!ProcesarOpcion(vista.LeerOpcion()))
         {
-            switch (vista.LeerOpcion())
-            {
-                case 1: Alta(); break;
-                case 2: Mostrar(gestor.Listar()); break;
-                case 3: Buscar(); break;
-                case 4: Modificar(); break;
-                case 5: CambiarEstado(false); break;
-                case 6: CambiarEstado(true); break;
-                case 7: VerPlantilla(); break;
-                case 0: return;
-            }
         }
     }
 
-    private void Alta()
+    private bool ProcesarOpcion(int opcion)
+    {
+        switch (opcion)
+        {
+            case 1: DarDeAlta(); return false;
+            case 2: MostrarResultados(gestor.Listar()); return false;
+            case 3: Buscar(); return false;
+            case 4: Modificar(); return false;
+            case 5: CambiarEstado(false); return false;
+            case 6: CambiarEstado(true); return false;
+            case 7: VerPlantilla(); return false;
+            case 0: return true;
+            default: return false;
+        }
+    }
+
+    private void DarDeAlta()
     {
         var d = vista.LeerDatos();
         Empresa empresa = gestor.Alta(d.Nombre, d.Cif, d.Telefono, d.Correo, d.Direccion);
@@ -42,30 +54,32 @@ internal sealed class ControladorEmpresas
         MostrarEmpresa(empresa);
     }
 
-    private Empresa? Localizar()
+    private Empresa? LocalizarPorId()
     {
-        Empresa? empresa = gestor.BuscarPorId(vista.LeerId());
-        if (empresa is null) vista.NoExiste();
-        return empresa;
+        return OperacionesControlador.BuscarPorId(
+            vista.LeerId, gestor.BuscarPorId, vista.NoExiste);
     }
 
     private void Buscar()
     {
-        if (vista.LeerTipoBusqueda() == 1)
-        {
-            Empresa? empresa = Localizar();
-            if (empresa is not null) MostrarEmpresa(empresa);
-        }
-        else
-        {
-            string texto = vista.LeerBusqueda();
-            Mostrar(gestor.Buscar(texto));
-        }
+        if (vista.LeerTipoBusqueda() == 1) BuscarPorId();
+        else BuscarPorTexto();
+    }
+
+    private void BuscarPorId()
+    {
+        Empresa? empresa = LocalizarPorId();
+        if (empresa is not null) MostrarEmpresa(empresa);
+    }
+
+    private void BuscarPorTexto()
+    {
+        MostrarResultados(gestor.Buscar(vista.LeerBusqueda()));
     }
 
     private void Modificar()
     {
-        Empresa? empresa = Localizar();
+        Empresa? empresa = LocalizarPorId();
         if (empresa is null) return;
         vista.DatosActuales();
         MostrarEmpresa(empresa);
@@ -84,7 +98,7 @@ internal sealed class ControladorEmpresas
 
     private void CambiarEstado(bool nuevoEstado)
     {
-        Empresa? empresa = Localizar();
+        Empresa? empresa = LocalizarPorId();
         if (empresa is null) return;
         MostrarEmpresa(empresa);
         if (empresa.Estado == nuevoEstado)
@@ -107,10 +121,12 @@ internal sealed class ControladorEmpresas
         MostrarEmpresa(empresa);
     }
 
-    private void Mostrar(IReadOnlyList<Empresa> empresas)
+    private void MostrarResultados(IReadOnlyList<Empresa> empresas)
     {
-        if (empresas.Count == 0) vista.SinResultados();
-        foreach (Empresa empresa in empresas) MostrarEmpresa(empresa);
+        OperacionesControlador.MostrarColeccion(
+            empresas,
+            vista.SinResultados,
+            MostrarEmpresa);
     }
 
     private void MostrarEmpresa(Empresa empresa) =>
@@ -118,8 +134,13 @@ internal sealed class ControladorEmpresas
 
     private void VerPlantilla()
     {
-        Empresa? empresa = Localizar();
+        Empresa? empresa = LocalizarPorId();
         if (empresa is null) return;
-        vista.MostrarPlantilla(empresa, personas.ListarPorEmpresa(empresa.Id));
+        IReadOnlyList<Persona> plantilla = personas.ListarPorEmpresa(empresa.Id);
+        vista.MostrarEncabezadoPlantilla(empresa);
+        OperacionesControlador.MostrarColeccion(
+            plantilla,
+            vista.MostrarPlantillaVacia,
+            persona => vistaPersonas.MostrarPersona(persona, empresa));
     }
 }

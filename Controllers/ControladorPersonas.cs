@@ -6,14 +6,14 @@ namespace AgendaConsultora.Controllers;
 
 internal sealed class ControladorPersonas
 {
-    private readonly GestorPersonas Gestor;
+    private readonly GestorPersonas gestor;
     private readonly VistaPersonas vista;
     private readonly GestorRelaciones relaciones;
     private readonly VistaRelaciones vistaRelaciones;
     public ControladorPersonas(GestorPersonas gestor, VistaPersonas vista,
         GestorRelaciones relaciones, VistaRelaciones vistaRelaciones)
     {
-        Gestor = gestor;
+        this.gestor = gestor;
         this.vista = vista;
         this.relaciones = relaciones;
         this.vistaRelaciones = vistaRelaciones;
@@ -21,57 +21,61 @@ internal sealed class ControladorPersonas
 
     public void Ejecutar()
     {
-        while (true)
+        while (!ProcesarOpcion(vista.LeerOpcion()))
         {
-            switch (vista.LeerOpcion())
-            {
-                case 1: Alta(); break;
-                case 2: MostrarResultados(Gestor.Listar()); break;
-                case 3: Buscar(); break;
-                case 4: Modificar(); break;
-                case 5: Baja(); break;
-                case 6: AsignarEmpresa(); break;
-                case 7: DesvincularEmpresa(); break;
-                case 0: return;
-            }
         }
     }
 
-    private void Alta()
+    private bool ProcesarOpcion(int opcion)
+    {
+        switch (opcion)
+        {
+            case 1: DarDeAlta(); return false;
+            case 2: MostrarResultados(gestor.Listar()); return false;
+            case 3: Buscar(); return false;
+            case 4: Modificar(); return false;
+            case 5: DarDeBaja(); return false;
+            case 6: AsignarEmpresa(); return false;
+            case 7: DesvincularEmpresa(); return false;
+            case 0: return true;
+            default: return false;
+        }
+    }
+
+    private void DarDeAlta()
     {
         var datos = vista.LeerDatos();
-        Persona persona = Gestor.Alta(datos.Nombre, datos.Apellidos, datos.Correo, datos.Telefono);
+        Persona persona = gestor.Alta(datos.Nombre, datos.Apellidos, datos.Correo, datos.Telefono);
         vista.AltaRealizada();
         MostrarPersona(persona);
     }
 
     private void Buscar()
     {
-        if (vista.LeerTipoBusqueda() == 1)
-        {
-            Persona? persona = Localizar();
-            if (persona is not null)
-                MostrarPersona(persona);
-        }
-        else
-        {
-            string texto = vista.LeerBusqueda();
-            MostrarResultados(Gestor.BuscarPorNombre(texto), true);
-        }
+        if (vista.LeerTipoBusqueda() == 1) BuscarPorId();
+        else BuscarPorNombre();
     }
 
-    private Persona? Localizar()
+    private void BuscarPorId()
     {
-        int id = vista.LeerId();
-        Persona? persona = Gestor.BuscarPorId(id);
-        if (persona is null)
-            vista.NoExiste();
-        return persona;
+        Persona? persona = LocalizarPorId();
+        if (persona is not null) MostrarPersona(persona);
+    }
+
+    private void BuscarPorNombre()
+    {
+        MostrarResultados(gestor.BuscarPorNombre(vista.LeerBusqueda()), true);
+    }
+
+    private Persona? LocalizarPorId()
+    {
+        return OperacionesControlador.BuscarPorId(
+            vista.LeerId, gestor.BuscarPorId, vista.NoExiste);
     }
 
     private void Modificar()
     {
-        Persona? persona = Localizar();
+        Persona? persona = LocalizarPorId();
         if (persona is null)
             return;
         vista.DatosActuales();
@@ -84,14 +88,14 @@ internal sealed class ControladorPersonas
             vista.ModificacionCancelada();
             return;
         }
-        Gestor.Modificar(persona.Id, datos.Nombre, datos.Apellidos, datos.Correo, datos.Telefono);
+        gestor.Modificar(persona.Id, datos.Nombre, datos.Apellidos, datos.Correo, datos.Telefono);
         vista.ModificacionRealizada();
-        MostrarPersona(Gestor.BuscarPorId(persona.Id)!);
+        MostrarPersona(gestor.BuscarPorId(persona.Id)!);
     }
 
-    private void Baja()
+    private void DarDeBaja()
     {
-        Persona? persona = Localizar();
+        Persona? persona = LocalizarPorId();
         if (persona is null)
             return;
         MostrarPersona(persona);
@@ -100,7 +104,7 @@ internal sealed class ControladorPersonas
             vista.BajaCancelada();
             return;
         }
-        Gestor.Baja(persona.Id);
+        gestor.Baja(persona.Id);
         vista.BajaRealizada();
     }
 
@@ -110,29 +114,45 @@ internal sealed class ControladorPersonas
 
     private void MostrarResultados(IReadOnlyList<Persona> personas, bool busqueda = false)
     {
-        if (personas.Count == 0) vista.SinResultados(busqueda);
-        foreach (Persona persona in personas) MostrarPersona(persona);
+        OperacionesControlador.MostrarColeccion(
+            personas,
+            () => vista.SinResultados(busqueda),
+            MostrarPersona);
     }
 
     private void AsignarEmpresa()
     {
-        Persona? persona = Localizar();
+        Persona? persona = LocalizarPorId();
         if (persona is null) return;
         MostrarPersona(persona);
-        int empresaId = vistaRelaciones.LeerEmpresaId();
-        Empresa? empresa = relaciones.BuscarEmpresa(empresaId);
-        if (empresa is null) { vistaRelaciones.EmpresaInexistente(); return; }
-        if (!empresa.Estado) { vistaRelaciones.EmpresaInactiva(); return; }
-        if (persona.EmpresaId == empresaId) { vistaRelaciones.YaAsignada(); return; }
+        Empresa? empresa = LocalizarEmpresaAsignable(persona);
+        if (empresa is null) return;
         vistaRelaciones.MostrarDestino(empresa);
         if (!vistaRelaciones.ConfirmarAsignacion()) { vistaRelaciones.Cancelada(); return; }
-        vistaRelaciones.ResultadoAsignacion(relaciones.Asignar(persona.Id, empresaId));
+        vistaRelaciones.ResultadoAsignacion(relaciones.Asignar(persona.Id, empresa.Id));
         MostrarPersona(persona);
+    }
+
+    private Empresa? LocalizarEmpresaAsignable(Persona persona)
+    {
+        int empresaId = vistaRelaciones.LeerEmpresaId();
+        Empresa? empresa = relaciones.BuscarEmpresa(empresaId);
+
+        if (empresa is null)
+            vistaRelaciones.EmpresaInexistente();
+        else if (!empresa.Estado)
+            vistaRelaciones.EmpresaInactiva();
+        else if (persona.EmpresaId == empresaId)
+            vistaRelaciones.YaAsignada();
+        else
+            return empresa;
+
+        return null;
     }
 
     private void DesvincularEmpresa()
     {
-        Persona? persona = Localizar();
+        Persona? persona = LocalizarPorId();
         if (persona is null) return;
         MostrarPersona(persona);
         if (persona.EmpresaId is null) { vistaRelaciones.SinEmpresa(); return; }

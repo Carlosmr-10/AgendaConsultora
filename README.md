@@ -1,98 +1,112 @@
-# Fase 3 — Relación entre personas y empresas
+# Fase 4 — Organización mediante funciones
 
-Entrega independiente basada en Fase 2, según los requisitos de la imagen del enunciado.
-Se conservan las operaciones de personas y empresas, el patrón MVC de consola y
-`Main` con una sola llamada a `ControladorAgenda.Iniciar()`.
+Esta entrega parte de la Fase 3, que ya contiene todas las funcionalidades de las
+Fases 1 y 2. La refactorización conserva la gestión de personas, la gestión de
+empresas, la baja lógica mediante `Estado`, la reactivación y las relaciones entre
+personas y empresas. No se ha añadido ni eliminado ninguna operación funcional.
 
-## Ejecutar
+## Ejecución
 
-Desde la raíz `AgendaConsultora`:
-
-```bash
-dotnet run --project Fase3/AgendaConsultora.csproj
-```
-
-Requiere .NET 10. Los datos se mantienen en memoria durante la sesión.
-
-## Nuevas operaciones
-
-En el menú Personas:
-
-- **6. Asignar o cambiar empresa:** introduce el Id de una persona y el de una
-  empresa existentes. Muestra la empresa de destino y pide confirmación. La empresa
-  debe estar activa. Asignar otra sustituye la relación anterior: nunca se acumulan
-  varias empresas en una persona.
-- **7. Desvincular empresa:** muestra la persona y pide confirmación. Su EmpresaId
-  pasa a null y conserva el resto de sus datos.
-- El listado, las búsquedas y las fichas muestran el nombre e Id de la empresa
-  asociada, o indican que no tiene empresa asignada.
-
-En el menú Empresas:
-
-- **7. Ver personas de una empresa:** solicita su Id y muestra su plantilla ordenada
-  por apellidos y nombre. Si no hay personas, lo indica expresamente.
-- Se mantienen la baja lógica y la reactivación.
-
-En los submenús, 0 vuelve al principal. Solo 0 en el principal termina la aplicación.
-
-## Política para empresas relacionadas
-
-**No se permite desactivar una empresa mientras tenga personas asociadas.**
-Se deben desvincular o trasladar antes esas personas. La interfaz informa del bloqueo
-sin solicitar confirmación de baja, y el gestor comprueba la misma condición.
-Cuando no quedan relaciones, la baja cambia únicamente `Estado = false`.
-No se elimina el registro de empresa ni se borran personas en cascada.
-La reactivación cambia `Estado = true` y conserva el mismo Id y datos.
-
-## Diseño
-
-- `Models/Persona.cs`: `int? EmpresaId` expresa cero o una empresa por persona.
-- `Models/Services/GestorRelaciones.cs`: comprueba ambos identificadores al asignar,
-  impide la asignación de empresas inactivas y permite consultar o quitar la relación.
-- `GestorPersonas.ListarPorEmpresa`: calcula la plantilla desde las personas, sin
-  mantener una segunda lista de relaciones que pudiera desincronizarse.
-- La modificación de datos personales conserva EmpresaId. El cambio de nombre de
-  empresa aparece en las consultas porque se resuelve su Id al mostrar la ficha.
-- `Controllers/`: coordina gestores, confirmaciones y consultas, sin textos ni Console.
-- `Views/`: textos, lectura y presentación. `VistaRelaciones` contiene los mensajes
-  de asignación y desvinculación; las vistas no acceden a los gestores.
-- `Program.cs`: arranque mediante una sola llamada.
-
-## Verificación reproducible
-
-Desde la raíz:
+Desde la carpeta raíz `AgendaConsultora`:
 
 ```bash
-dotnet build Fase2/AgendaConsultora.csproj -warnaserror
-dotnet build Fase3/AgendaConsultora.csproj -warnaserror
-python3 pruebas/verificar_10_por_fase.py
-python3 Fase2/pruebas/verificar.py
-python3 Fase3/pruebas/verificar.py
-dotnet run --project Fase2/pruebas/Servicios/Servicios.csproj
-dotnet run --project Fase3/pruebas/Servicios/Servicios.csproj
+dotnet run --project Fase4/AgendaConsultora.csproj
 ```
 
-Se han ejecutado diez pruebas de aceptación distintas en Fase 2 y diez en Fase 3.
-Cada prueba puede contener varias ejecuciones y aserciones para cubrir resultados,
-cancelaciones y errores. Los informes están en `evidencias/aceptacion-10-pruebas.txt`
-de cada fase; el código reproducible está en `pruebas/verificar_10_por_fase.py` de la raíz.
+Requiere .NET 10. Los datos se mantienen en memoria durante la ejecución.
 
-Además, ambas fases superan sus 23 escenarios heredados de consola; Fase 2 supera
-21 comprobaciones de servicios y Fase 3 supera 31, incluidas diez de relaciones.
-Las dos fases compilan en Debug y Release sin errores ni advertencias.
+## Reparto de responsabilidades
 
-| Prueba Fase 3 | Resultado esperado |
-|---|---|
-| Persona recién creada | Sin empresa asignada |
-| Asignación válida | Empresa visible en ficha, búsqueda y listado |
-| Cambio de empresa | Desaparece de la plantilla anterior y aparece en la nueva |
-| Desvinculación | Mantiene nombre, correo y teléfono; queda sin empresa |
-| Empresa con cero o varias personas | Mensaje de plantilla vacía o listado ordenado |
-| Baja con personas | Bloqueada, empresa sigue activa |
-| Desvincular, desactivar y reactivar | Misma empresa conservada; se puede reasignar |
-| Id inválido/inexistente o empresa inactiva | Rechazo sin crear una relación |
-| Cancelación o fin de entrada | No guarda la asignación pendiente |
-| Modificar datos personales o empresa | Conserva la relación y refleja los datos actualizados |
+### Arranque y coordinación general
 
-Las pruebas cubren los requisitos y escenarios indicados, sin prometer ausencia
-absoluta de cualquier posible defecto.
+- `Program.Main`: contiene una única llamada a `ControladorAgenda.Iniciar()`.
+- `ControladorAgenda.Iniciar`: crea la aplicación mediante `CrearControlador` y
+  comienza su ejecución.
+- `CrearControlador`: construye una sola instancia de cada gestor compartido,
+  conecta las vistas con sus controladores y devuelve el controlador principal.
+- `EjecutarMenuPrincipal`: mantiene el menú activo hasta seleccionar salir.
+- `ProcesarOpcionPrincipal`: dirige cada opción al controlador correspondiente y
+  devuelve `true` solamente cuando hay que terminar.
+
+### Presentación, lectura y validación
+
+- `VistaAgenda.LeerOpcion`, `VistaPersonas.LeerOpcion` y
+  `VistaEmpresas.LeerOpcion`: presentan cada menú y devuelven una opción válida.
+- `VistaPersonas.LeerDatos` y `VistaEmpresas.LeerDatos`: solicitan los campos y
+  devuelven objetos `DatosPersona` o `DatosEmpresa`, evitando tuplas ambiguas.
+- `Entrada.Texto`: repite una pregunta hasta superar la función de validación
+  recibida como parámetro.
+- `Entrada.Numero`: usa `IntentarLeerNumeroEnRango` para evitar excepciones y
+  aceptar únicamente números dentro de los límites indicados.
+- `Entrada.Confirmar`: reutiliza `EsRespuestaAfirmativa` y
+  `EsRespuestaNegativa` para interpretar S/SI/SÍ y N/NO.
+- `Validador`: contiene reglas puras para texto obligatorio, correo y teléfono.
+- Las vistas contienen todos los textos y formatos de consola. Los gestores y
+  controladores no escriben directamente en `Console`.
+
+### Operaciones reutilizables de los controladores
+
+- `OperacionesControlador.BuscarPorId<T>`: recibe las funciones para leer el Id,
+  buscar el elemento y avisar si no existe. Se reutiliza en personas y empresas.
+- `OperacionesControlador.MostrarColeccion<T>`: muestra una colección con una
+  función recibida o ejecuta el aviso de colección vacía.
+- `ProcesarOpcion` en cada controlador: asigna cada opción a una función con un
+  nombre descriptivo y devuelve si debe volver al menú principal.
+- `BuscarPorId` y `BuscarPorNombre`/`BuscarPorTexto`: separan los dos tipos de
+  búsqueda sin duplicar la localización por identificador.
+- `DarDeAlta`, `Modificar`, `DarDeBaja`, `CambiarEstado`, `AsignarEmpresa`,
+  `DesvincularEmpresa` y `VerPlantilla`: cada función coordina una sola operación.
+- `LocalizarEmpresaAsignable`: comprueba existencia, estado y asignación previa
+  antes de devolver una empresa válida para crear o cambiar una relación.
+
+### Modelo y gestión de datos
+
+- `GestorPersonas` y `GestorEmpresas`: poseen las colecciones y ejecutan altas,
+  búsquedas, modificaciones y bajas. La consola no conoce esas colecciones.
+- `NormalizarDatos`: elimina espacios exteriores y devuelve un objeto de datos.
+- `CrearPersonaValidada` y `CrearEmpresaValidada`: validan antes de crear.
+- `AplicarDatos`: actualiza los campos modificables de una empresa después de
+  validar toda la propuesta, evitando cambios parciales.
+- `CoincideConTodasLasPalabras`: concentra la regla de búsqueda parcial de personas.
+- `PuedeDesactivar`: centraliza la regla que bloquea una empresa relacionada.
+- `GestorRelaciones`: asigna, cambia, consulta y elimina la asociación sin duplicar
+  listas ni permitir que una persona pertenezca a más de una empresa.
+
+## Parámetros, retornos y estado
+
+- Las lecturas compuestas devuelven `DatosPersona` y `DatosEmpresa`; sus nombres de
+  propiedad documentan el significado de cada valor.
+- Las búsquedas devuelven el objeto encontrado o `null`.
+- Las operaciones que pueden fallar devuelven `bool`.
+- Los listados se exponen como `IReadOnlyList<T>` para impedir modificaciones desde
+  los controladores.
+- No hay variables globales mutables. Las colecciones y contadores son campos
+  privados de cada gestor porque representan el estado en memoria de la sesión.
+- `GestorPersonas.Orden` es el único campo estático: es un comparador inmutable y
+  compartido, sin datos de personas ni empresas.
+
+## Ausencia de duplicación
+
+La localización por Id y la presentación de colecciones se implementan una sola vez
+mediante funciones genéricas. Las reglas de entrada numérica y confirmación también
+están centralizadas. La vista de personas se comparte al mostrar la plantilla de una
+empresa, por lo que el formato de una persona no se repite.
+
+## Verificación
+
+```bash
+dotnet build Fase4/AgendaConsultora.csproj -warnaserror
+python3 Fase4/pruebas/verificar.py
+dotnet run --project Fase4/pruebas/Servicios/Servicios.csproj
+dotnet build Fase4/AgendaConsultora.csproj --configuration Release -warnaserror
+python3 Fase4/pruebas/revision_10_pasadas.py
+dotnet format Fase4/AgendaConsultora.csproj --verify-no-changes --no-restore
+```
+
+La aplicación conserva los 23 escenarios de consola y las 31 comprobaciones de
+servicios heredadas de Fase 3. También se compara una demostración completa de Fase
+3 y Fase 4, ignorando únicamente el título de fase, para confirmar que el flujo y
+los resultados funcionales permanecen iguales.
+
+La auditoría final realiza diez pasadas diferenciadas y deja su informe en
+`evidencias/revision-10-pasadas.md`.

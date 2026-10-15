@@ -28,7 +28,7 @@ public static class Entrada
         while (true)
         {
             string valor = Leer(mensaje);
-            if (int.TryParse(valor, out int numero) && numero >= minimo && numero <= maximo)
+            if (IntentarLeerNumeroEnRango(valor, minimo, maximo, out int numero))
                 return numero;
             Console.WriteLine($"Opción no válida. Introduce un número entre {minimo} y {maximo}.");
         }
@@ -39,11 +39,24 @@ public static class Entrada
         while (true)
         {
             string respuesta = Leer(mensaje + " (S/SI/N/NO): ").ToUpperInvariant();
-            if (respuesta is "S" or "SI" or "SÍ")
+            if (EsRespuestaAfirmativa(respuesta))
                 return true;
-            if (respuesta is "N" or "NO")
+            if (EsRespuestaNegativa(respuesta))
                 return false;
             Console.WriteLine("Respuesta no válida. Escribe S o N.");
         }
     }
+
+    private static bool IntentarLeerNumeroEnRango(
+        string valor,
+        int minimo,
+        int maximo,
+        out int numero) =>
+        int.TryParse(valor, out numero) && numero >= minimo && numero <= maximo;
+
+    private static bool EsRespuestaAfirmativa(string respuesta) =>
+        respuesta is "S" or "SI" or "SÍ";
+
+    private static bool EsRespuestaNegativa(string respuesta) =>
+        respuesta is "N" or "NO";
 }

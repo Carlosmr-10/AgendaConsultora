@@ -16,7 +16,8 @@ public sealed class GestorPersonas
 
     public Persona Alta(string nombre, string apellidos, string correo, string telefono)
     {
-        Persona persona = CrearPersona(siguienteId, nombre, apellidos, correo, telefono);
+        DatosPersona datos = NormalizarDatos(nombre, apellidos, correo, telefono);
+        Persona persona = CrearPersonaValidada(siguienteId, datos);
         siguienteId = checked(siguienteId + 1);
         personas.Add(persona);
         return persona;
@@ -31,8 +32,7 @@ public sealed class GestorPersonas
         if (palabras.Length == 0)
             return Array.Empty<Persona>();
 
-        return Ordenar(personas.Where(p => palabras.All(palabra =>
-            $"{p.Nombre} {p.Apellidos}".Contains(palabra, StringComparison.OrdinalIgnoreCase))));
+        return Ordenar(personas.Where(persona => CoincideConTodasLasPalabras(persona, palabras)));
     }
 
     public bool Modificar(int id, string nombre, string apellidos, string correo, string telefono)
@@ -40,7 +40,8 @@ public sealed class GestorPersonas
         int indice = personas.FindIndex(p => p.Id == id);
         if (indice < 0)
             return false;
-        Persona propuesta = CrearPersona(id, nombre, apellidos, correo, telefono);
+        DatosPersona datos = NormalizarDatos(nombre, apellidos, correo, telefono);
+        Persona propuesta = CrearPersonaValidada(id, datos);
         propuesta.EmpresaId = personas[indice].EmpresaId;
         personas[indice] = propuesta;
         return true;
@@ -74,16 +75,31 @@ public sealed class GestorPersonas
     private static Persona[] Ordenar(IEnumerable<Persona> resultado) => resultado
         .OrderBy(p => p.Apellidos, Orden).ThenBy(p => p.Nombre, Orden).ThenBy(p => p.Id).ToArray();
 
-    private static Persona CrearPersona(int id, string nombre, string apellidos,
-        string correo, string telefono)
+    private static bool CoincideConTodasLasPalabras(Persona persona, IEnumerable<string> palabras)
     {
-        nombre = nombre.Trim();
-        apellidos = apellidos.Trim();
-        correo = correo.Trim();
-        telefono = telefono.Trim();
-        if (!Validador.TextoObligatorio(nombre) || !Validador.TextoObligatorio(apellidos)
-            || !Validador.CorreoValido(correo) || !Validador.TelefonoValido(telefono))
+        string nombreCompleto = $"{persona.Nombre} {persona.Apellidos}";
+        return palabras.All(palabra =>
+            nombreCompleto.Contains(palabra, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static DatosPersona NormalizarDatos(
+        string nombre,
+        string apellidos,
+        string correo,
+        string telefono) => new(
+            nombre.Trim(),
+            apellidos.Trim(),
+            correo.Trim(),
+            telefono.Trim());
+
+    private static Persona CrearPersonaValidada(int id, DatosPersona datos)
+    {
+        if (!Validador.TextoObligatorio(datos.Nombre)
+            || !Validador.TextoObligatorio(datos.Apellidos)
+            || !Validador.CorreoValido(datos.Correo)
+            || !Validador.TelefonoValido(datos.Telefono))
             throw new ArgumentException("Los datos de la persona no son válidos.");
-        return new Persona(id, nombre, apellidos, correo, telefono);
+
+        return new Persona(id, datos.Nombre, datos.Apellidos, datos.Correo, datos.Telefono);
     }
 }

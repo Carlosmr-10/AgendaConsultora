@@ -5,7 +5,7 @@ namespace AgendaConsultora.Views;
 
 internal sealed class VistaPersonas
 {
-    public (string Nombre, string Apellidos, string Correo, string Telefono) LeerDatos()
+    public DatosPersona LeerDatos()
     {
         Console.WriteLine("Todos los campos son obligatorios.");
         string nombre = Entrada.Texto("Nombre: ", Validador.TextoObligatorio, "El nombre no puede estar vacío.");
@@ -13,7 +13,7 @@ internal sealed class VistaPersonas
         string correo = Entrada.Texto("Correo: ", Validador.CorreoValido, "Correo no válido. Ejemplo: ana@consultora.es");
         string telefono = Entrada.Texto("Teléfono (9 dígitos sin separadores): ", Validador.TelefonoValido,
             "Teléfono no válido. Introduce exactamente 9 dígitos, sin letras ni separadores.");
-        return (nombre, apellidos, correo, telefono);
+        return new DatosPersona(nombre, apellidos, correo, telefono);
     }
 
     public void MostrarPersona(Persona persona, Empresa? empresa)
@@ -67,5 +67,6 @@ internal sealed class VistaPersonas
 
     public void SolicitarNuevosDatos() => Console.WriteLine("Introduce todos los datos nuevos, repitiendo los que quieras conservar.");
 
-    public void MostrarPropuesta(int id, (string Nombre, string Apellidos, string Correo, string Telefono) datos) => Console.WriteLine($"Propuesta para Id {id}: {datos.Nombre} {datos.Apellidos} | {datos.Correo} | {datos.Telefono}");
+    public void MostrarPropuesta(int id, DatosPersona datos) =>
+        Console.WriteLine($"Propuesta para Id {id}: {datos.Nombre} {datos.Apellidos} | {datos.Correo} | {datos.Telefono}");
 }

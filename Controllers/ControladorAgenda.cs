@@ -18,14 +18,22 @@ internal sealed class ControladorAgenda
 
     public static void Iniciar()
     {
+        CrearControlador().Ejecutar();
+    }
+
+    private static ControladorAgenda CrearControlador()
+    {
         var gestorPersonas = new GestorPersonas();
         var gestorEmpresas = new GestorEmpresas(gestorPersonas);
-        var controlador = new ControladorAgenda(
+        var gestorRelaciones = new GestorRelaciones(gestorPersonas, gestorEmpresas);
+        var vistaPersonas = new VistaPersonas();
+
+        return new ControladorAgenda(
             new VistaAgenda(),
-            new ControladorPersonas(gestorPersonas, new VistaPersonas(),
-                new GestorRelaciones(gestorPersonas, gestorEmpresas), new VistaRelaciones()),
-            new ControladorEmpresas(gestorEmpresas, new VistaEmpresas(), gestorPersonas));
-        controlador.Ejecutar();
+            new ControladorPersonas(
+                gestorPersonas, vistaPersonas, gestorRelaciones, new VistaRelaciones()),
+            new ControladorEmpresas(
+                gestorEmpresas, new VistaEmpresas(), gestorPersonas, vistaPersonas));
     }
 
     private void Ejecutar()
@@ -33,19 +41,31 @@ internal sealed class ControladorAgenda
         vista.MostrarInicio();
         try
         {
-            while (true)
-            {
-                switch (vista.LeerOpcion())
-                {
-                    case 1: personas.Ejecutar(); break;
-                    case 2: empresas.Ejecutar(); break;
-                    case 0: vista.MostrarDespedida(); return;
-                }
-            }
+            EjecutarMenuPrincipal();
         }
         catch (EndOfStreamException)
         {
             vista.MostrarFinEntrada();
+        }
+    }
+
+    private void EjecutarMenuPrincipal()
+    {
+        while (!ProcesarOpcionPrincipal(vista.LeerOpcion()))
+        {
+        }
+
+        vista.MostrarDespedida();
+    }
+
+    private bool ProcesarOpcionPrincipal(int opcion)
+    {
+        switch (opcion)
+        {
+            case 1: personas.Ejecutar(); return false;
+            case 2: empresas.Ejecutar(); return false;
+            case 0: return true;
+            default: return false;
         }
     }
 }

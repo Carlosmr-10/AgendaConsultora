@@ -1,6 +1,6 @@
 Datos en memoria: se perderán al cerrar la aplicación.
 
-=== AGENDA CONSULTORA ===
+=== AGENDA CONSULTORA — FASE 4 ===
 1. Gestión de personas
 2. Gestión de empresas
 0. Salir
@@ -146,7 +146,7 @@ Baja disponible: Sí
 7. Ver personas de una empresa
 0. Volver al menú principal
 Selecciona una opción: 
-=== AGENDA CONSULTORA ===
+=== AGENDA CONSULTORA — FASE 4 ===
 1. Gestión de personas
 2. Gestión de empresas
 0. Salir
@@ -195,7 +195,7 @@ Empresa: Sin empresa asignada
 7. Desvincular empresa
 0. Volver al menú principal
 Selecciona una opción: 
-=== AGENDA CONSULTORA ===
+=== AGENDA CONSULTORA — FASE 4 ===
 1. Gestión de personas
 2. Gestión de empresas
 0. Salir

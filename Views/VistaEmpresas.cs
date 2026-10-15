@@ -5,7 +5,7 @@ namespace AgendaConsultora.Views;
 
 internal sealed class VistaEmpresas
 {
-    public (string Nombre, string Cif, string Telefono, string Correo, string Direccion) LeerDatos()
+    public DatosEmpresa LeerDatos()
     {
         Console.WriteLine("Todos los campos son obligatorios.");
         string nombre = Entrada.Texto("Nombre comercial: ", Validador.TextoObligatorio, "El nombre comercial es obligatorio.");
@@ -13,7 +13,7 @@ internal sealed class VistaEmpresas
         string telefono = Entrada.Texto("Teléfono (9 dígitos): ", Validador.TelefonoValido, "Teléfono no válido.");
         string correo = Entrada.Texto("Correo: ", Validador.CorreoValido, "Correo no válido.");
         string direccion = Entrada.Texto("Dirección: ", Validador.TextoObligatorio, "La dirección es obligatoria.");
-        return (nombre, cif, telefono, correo, direccion);
+        return new DatosEmpresa(nombre, cif, telefono, correo, direccion);
     }
 
     public void MostrarEmpresa(Empresa empresa, bool puedeDesactivar)
@@ -69,13 +69,12 @@ internal sealed class VistaEmpresas
 
     public void SolicitarNuevosDatos() => Console.WriteLine("Introduce los datos nuevos, repitiendo los que quieras conservar.");
 
-    public void MostrarPropuesta((string Nombre, string Cif, string Telefono, string Correo, string Direccion) d) => Console.WriteLine($"Propuesta: {d.Nombre} | {d.Cif} | {d.Telefono} | {d.Correo} | {d.Direccion}");
+    public void MostrarPropuesta(DatosEmpresa datos) =>
+        Console.WriteLine($"Propuesta: {datos.Nombre} | {datos.Cif} | {datos.Telefono} | {datos.Correo} | {datos.Direccion}");
 
-    public void MostrarPlantilla(Empresa empresa, IReadOnlyList<Persona> personas)
-    {
+    public void MostrarEncabezadoPlantilla(Empresa empresa) =>
         Console.WriteLine($"Plantilla de {empresa.NombreComercial} (Id: {empresa.Id})");
-        if (personas.Count == 0) Console.WriteLine("Esta empresa no tiene personas asociadas.");
-        var vistaPersonas = new VistaPersonas();
-        foreach (Persona persona in personas) vistaPersonas.MostrarPersona(persona, empresa);
-    }
+
+    public void MostrarPlantillaVacia() =>
+        Console.WriteLine("Esta empresa no tiene personas asociadas.");
 }

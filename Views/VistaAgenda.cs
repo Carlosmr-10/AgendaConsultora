@@ -12,7 +12,7 @@ internal sealed class VistaAgenda
 
     public int LeerOpcion()
     {
-        Console.WriteLine("\n=== AGENDA CONSULTORA ===");
+        Console.WriteLine("\n=== AGENDA CONSULTORA — FASE 4 ===");
         Console.WriteLine("1. Gestión de personas\n2. Gestión de empresas\n0. Salir");
         return Entrada.Numero("Selecciona una opción: ", 0, 2);
     }

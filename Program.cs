@@ -4,8 +4,5 @@ namespace AgendaConsultora;
 
 internal static class Program
 {
-    private static void Main() { 
-        
-        ControladorAgenda.Iniciar(); 
-    }
+    private static void Main() => ControladorAgenda.Iniciar();
 }
